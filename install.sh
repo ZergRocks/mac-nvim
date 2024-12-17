@@ -38,7 +38,7 @@ fi
 if test -d "$HOME/nvim-lua"; then
     cd nvim-lua && git pull origin main && cd $HOME
 else
-    git clone https://github.com/tridge-hq/nvim-lua.git $HOME/nvim-lua
+    git clone https://github.com/ZergRocks/mac-nvim.git $HOME/nvim-lua
 fi
 
 # nvim related
