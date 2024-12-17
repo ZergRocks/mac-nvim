@@ -11,9 +11,9 @@ brew install --force git the_silver_searcher tmux zsh fzf universal-ctags wget h
     lsd pyenv pyenv-virtualenv direnv neovim bat
 
 # Font
-brew tap homebrew/cask-fonts
-brew install --cask font-hack-nerd-font
-brew install --cask font-jetbrains-mono-nerd-font
+# brew tap homebrew/cask-fonts
+# brew install --cask font-hack-nerd-font
+# brew install --cask font-jetbrains-mono-nerd-font
 
 
 # Install python packages
@@ -54,18 +54,8 @@ mkdir -p $HOME/.config/nvim
 # Link files
 ln -sf $HOME/nvim-lua/init.lua $HOME/.config/nvim/init.lua
 ln -sf $HOME/nvim-lua/lua $HOME/.config/nvim/
-if test -f "$HOME/.zshrc"; then
-    mv $HOME/.zshrc $HOME/.zshrc_old_$TIMESTAMP
-fi
 ln -sf $HOME/nvim-lua/zshrc $HOME/.zshrc
-if test -f "$HOME/.tmux.conf"; then
-    mv $HOME/.tmux.conf $HOME/.tmux.conf_old_$TIMESTAMP
-fi
 ln -sf $HOME/nvim-lua/tmux.conf $HOME/.tmux.conf
 
 # Install tpm
-if test -d "$HOME/.tmux/plugins/tpm"; then
-    cd $HOME/.tmux/plugins/tpm && git pull origin master && cd $HOME
-else
-    git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
-fi
+git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
