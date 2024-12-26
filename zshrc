@@ -1,5 +1,6 @@
 export ZSH=$HOME/.oh-my-zsh
 export UPDATE_ZSH_DAYS=13
+export PATH="/usr/local/Caskroom/miniconda/base/bin:$PATH"
 
 ZSH_THEME="robbyrussell"
 CASE_SENSITIVE="true"

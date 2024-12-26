@@ -4,7 +4,7 @@
 
 # Install other packages
 brew install --force git the_silver_searcher tmux zsh fzf universal-ctags wget httpie \
-    lsd neovim bat
+    lsd neovim bat miniconda
 
 # zsh
 sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
