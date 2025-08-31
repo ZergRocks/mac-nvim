@@ -5,6 +5,7 @@ vim.g.mapleader = ","
 -- vim sql_omni_key
 -- https://neovim.io/doc/user/ft_sql.html
 vim.g.ftplugin_sql_omni_key = "<C-;>"
+-- vim.o.syntax = 'enable'
 vim.o.autoindent = true
 vim.o.backspace = "indent,eol,start"
 vim.o.backupdir = os.getenv("HOME") .. "/.tmp/vim/backup/"

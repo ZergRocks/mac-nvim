@@ -60,7 +60,7 @@ vim.keymap.set("n", "<Leader>gg", ":G blame<CR>")
 vim.keymap.set("n", "<Leader>gs", ":G<CR>")
 vim.keymap.set("n", "<Leader>gd", ":Gdiff<CR>")
 vim.keymap.set("n", "<Leader>gl", ":G log<CR>")
-vim.keymap.set("n", "<Leader>gf", ":G fetch origin<CR>")
+vim.keymap.set("n", "<Leader>gfetch", ":G fetch origin<CR>")
 vim.keymap.set("n", "<Leader>ggl", ":G pull origin ")
 vim.keymap.set("n", "<Leader>gpp", ":G push origin ")
 vim.keymap.set("n", "<silent> <Leader>gw", ":Gwrite<CR>")
@@ -70,38 +70,15 @@ vim.keymap.set("n", "<silent> <Leader>gr", ":Gread<CR>")
 -- Undotree --
 vim.keymap.set("n", "<Leader>u", ":UndotreeToggle<CR>:UndotreeFocus<CR>")
 
--------------
--- Tabular --
-vim.keymap.set("n", "<Leader>t=", ":Tabularize /=<CR>")
-vim.keymap.set("v", "<Leader>t=", ":Tabularize /=<CR>")
-vim.keymap.set("n", "<Leader>t:", ":Tabularize /:<CR>")
-vim.keymap.set("v", "<Leader>t:", ":Tabularize /:<CR>")
-vim.keymap.set("n", "<Leader>t::", ":Tabularize /:\zs<CR>")
-vim.keymap.set("v", "<Leader>t::", ":Tabularize /:\zs<CR>")
-vim.keymap.set("n", "<Leader>t,", ":Tabularize /,<CR>")
-vim.keymap.set("v", "<Leader>t,", ":Tabularize /,<CR>")
-vim.keymap.set("n", "<Leader>t<Bar>", ":Tabularize /<Bar><CR>")
-vim.keymap.set("v", "<Leader>t<Bar>", ":Tabularize /<Bar><CR>")
 
-------------
--- tagbar --
-vim.keymap.set("n", "<Leader>ta", ":TagbarToggle<CR>")
 
---------------
--- Startify --
-vim.keymap.set("n", "<Leader>sl", ":SLoad")
-vim.keymap.set("n", "<Leader>sc", ":SClose<CR>")
-vim.keymap.set("n", "<Leader>ss", ":SSave")
 
 --------------
 -- gitsigns --
 vim.keymap.set("n", "<Leader>p", ":Gitsigns preview_hunk_inline<CR>")
 vim.keymap.set("n", "<Leader>m", ":Gitsigns toggle_current_line_blame<CR>")
-vim.keymap.set("n", "<Leader>gd", ":Gitsigns diffthis<CR>")
+vim.keymap.set("n", "<Leader>gh", ":Gitsigns diffthis<CR>")
 
-------------
--- dadbod --
-vim.keymap.set("n", "<Leader>db", ":DBUIToggle<CR>")
 
 ------------
 --  lsp  ---
@@ -111,16 +88,4 @@ vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
 vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist, opts)
 
---------------
--- sort.vim --
-vim.keymap.set("v", "<Leader>s", ":Sort")
--- Single line:[range]Sort[!] [delimiter][b][i][n][o][u][x]
--- Multiple lines: fed into :sort | See details: ":help sort"
 
-------------
--- ollama --
-vim.keymap.set("n", "<Leader>oo", ":<c-u>lua require('ollama').prompt()<cr>")
-vim.keymap.set("v", "<Leader>oo", ":<c-u>lua require('ollama').prompt()<cr>")
-vim.keymap.set("n", "<Leader>og", ":<c-u>lua require('ollama').prompt('Generate_Code')<cr>")
-vim.keymap.set("v", "<Leader>og", ":<c-u>lua require('ollama').prompt('Generate_Code')<cr>")
-vim.keymap.set("n", "<leader>om", ":OllamaModel")
