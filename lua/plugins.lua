@@ -92,7 +92,6 @@ return {
         ensure_installed = {
           "lua_ls",
           "pyright",
-          "gopls",
           "ts_ls",
           "taplo",
           "yamlls",
@@ -111,7 +110,6 @@ return {
           "python",
           "javascript",
           "typescript",
-          "go",
           "yaml",
           "json",
           "markdown",

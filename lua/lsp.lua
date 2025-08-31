@@ -64,7 +64,7 @@ return {
       })
 
       -- Setup remaining LSP servers
-      local servers = { "gopls", "taplo", "ts_ls", "yamlls" }
+      local servers = { "taplo", "ts_ls", "yamlls" }
 
       for _, server in ipairs(servers) do
         lspconfig[server].setup({
