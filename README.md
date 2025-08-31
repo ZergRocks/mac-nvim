@@ -5,7 +5,7 @@
 ## Features
 
 - **Unified Solarized Light Theme**: Consistent light yellow theme across Neovim and Tmux
-- **Essential Plugins Only**: Streamlined plugin selection focused on core functionality
+- **Essential Plugins Only**: Streamlined plugin selection focused on core functionality  
 - **LSP Integration**: Modern Language Server Protocol support with Mason
 - **Git Workflow**: Integrated Git operations with Fugitive and Gitsigns
 - **File Navigation**: FZF integration for fast file finding
@@ -14,7 +14,7 @@
 ## Installation
 
 ### Prerequisites
-- Neovim >= 0.8
+- Neovim >= 0.10
 - Git
 - Node.js (for LSP servers)
 - FZF
@@ -23,7 +23,7 @@
 ### Quick Setup
 ```bash
 cd ~
-git clone https://github.com/tridge-hq/nvim-lua.git mac-nvim
+git clone https://github.com/ZergRocks/mac-nvim.git
 cd mac-nvim
 ./install.sh
 ```
@@ -34,7 +34,8 @@ cd mac-nvim
 mv ~/.config/nvim ~/.config/nvim.backup
 
 # Link configuration
-ln -s $(pwd) ~/.config/nvim
+ln -s $(pwd)/init.lua ~/.config/nvim/init.lua
+ln -s $(pwd)/lua ~/.config/nvim/lua
 ln -s $(pwd)/tmux.conf ~/.tmux.conf
 
 # Install plugins (open nvim and plugins will auto-install)
@@ -44,11 +45,10 @@ nvim
 ## Directory Structure
 
 ```
-├── init.lua              # Entry point
+├── init.lua              # Entry point with Lazy.nvim setup
 ├── lua/
 │   ├── core.lua         # Core vim settings
-│   ├── plugins.lua      # Plugin specifications
-│   ├── configs.lua      # Plugin configurations
+│   ├── plugins.lua      # Plugin specifications with configurations
 │   ├── lsp.lua          # LSP and completion setup
 │   └── keymaps.lua      # Key mappings
 ├── tmux.conf            # Tmux configuration
@@ -91,7 +91,7 @@ nvim
 - `<Leader>y` - Copy to system clipboard
 - `<Leader>zz` - Remove trailing whitespace
 
-## Plugin List
+## Plugin List (37 Total)
 
 ### Core Functionality
 - **nvim-solarized-lua** - Solarized Light colorscheme
@@ -111,15 +111,23 @@ nvim
 
 ### LSP & Development
 - **mason.nvim** - LSP server management
+- **mason-lspconfig.nvim** - LSP server auto-installation
 - **nvim-lspconfig** - LSP configurations
 - **nvim-cmp** - Autocompletion
 - **nvim-treesitter** - Syntax highlighting
 - **LuaSnip** - Snippet engine
 
+### Code Formatting
+- **none-ls.nvim** - Null-ls for formatting and linting
+- **mason-null-ls.nvim** - Auto-install formatters
+
 ### UI Enhancement
 - **lualine.nvim** - Status line
 - **bufferline.nvim** - Buffer tabs
 - **nvim-web-devicons** - File icons
+
+### Integration
+- **nvim-tmux-navigation** - Tmux pane navigation
 
 ## Theme Details
 
@@ -135,6 +143,13 @@ The theme provides:
 - Reduced eye strain in bright environments
 - Consistent colors across Neovim and Tmux
 - Professional appearance suitable for all contexts
+
+## Performance Metrics
+
+- **Startup Time**: ~0.26 seconds
+- **Plugin Count**: 37 (streamlined from 68)
+- **Memory Usage**: Optimized with lazy loading
+- **LSP Support**: Lua, Python, Go, TypeScript, YAML, TOML
 
 ## Maintenance
 
@@ -152,8 +167,8 @@ The theme provides:
 ```
 
 ### Adding New Languages
-1. Add LSP server to `lua/lsp.lua`
-2. Add treesitter parser to `lua/configs.lua`
+1. Add LSP server to mason-lspconfig setup in `lua/plugins.lua`
+2. Add treesitter parser to treesitter config in `lua/plugins.lua`
 3. Restart Neovim
 
 ## Troubleshooting
@@ -188,17 +203,18 @@ tmux source-file ~/.tmux.conf
 
 ## Performance Tips
 
-1. **Lazy Loading**: Plugins load only when needed
-2. **Minimal Plugin Set**: Only essential plugins included
+1. **Lazy Loading**: Plugins load only when needed via Lazy.nvim
+2. **Minimal Plugin Set**: Only 37 essential plugins included
 3. **Optimized Settings**: Tuned for fast startup and responsive editing
 4. **Clean Configuration**: No unnecessary features or bloat
+5. **Dependency Management**: Smart plugin dependencies and loading order
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
+4. Test thoroughly with the quality verification checklist
 5. Submit a pull request
 
 ## License

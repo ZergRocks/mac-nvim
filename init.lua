@@ -1,4 +1,7 @@
+-- Load core settings first
 require("core")
+
+-- Setup lazy.nvim plugin manager
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
@@ -12,7 +15,21 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.runtimepath:prepend(lazypath)
 
-require("lazy").setup("plugins", { concurrency = 50 })
-require("configs")
-require("lsp")
+-- Setup plugins
+require("lazy").setup({
+  spec = {
+    { import = "plugins" },
+    { import = "lsp" },
+  },
+  defaults = {
+    lazy = false,
+  },
+  install = {
+    colorscheme = { "solarized" },
+  },
+  checker = { enabled = false },
+  concurrency = 50,
+})
+
+-- Load keymaps after plugins are loaded
 require("keymaps")
