@@ -26,14 +26,32 @@ rm -rf $HOME/.config.nvim
 mkdir -p $HOME/.config
 mkdir -p $HOME/.config/nvim
 
-# Link files
-rm -rf $HOME/nvim-lua
-ln -sf $(pwd) $HOME/nvim-lua
-ln -sf $HOME/nvim-lua/init.lua $HOME/.config/nvim/init.lua
-ln -sf $HOME/nvim-lua/lua $HOME/.config/nvim/
-ln -sf $HOME/nvim-lua/zshrc $HOME/.zshrc
-ln -sf $HOME/nvim-lua/tmux.conf $HOME/.tmux.conf
+# Remove old nvim-lua directory with proper permissions handling
+if [ -d "$HOME/nvim-lua" ]; then
+    # Check if we can remove it normally
+    if ! rm -rf $HOME/nvim-lua 2>/dev/null; then
+        echo "Removing old nvim-lua directory with elevated permissions..."
+        sudo rm -rf $HOME/nvim-lua
+    fi
+fi
+
+# Use current directory name instead of hardcoded nvim-lua
+CURRENT_DIR=$(pwd)
+PROJECT_NAME=$(basename "$CURRENT_DIR")
+
+# Create symlink with current project directory
+ln -sf "$CURRENT_DIR" "$HOME/$PROJECT_NAME"
+
+# Update config symlinks to use actual project name
+ln -sf "$HOME/$PROJECT_NAME/init.lua" $HOME/.config/nvim/init.lua
+ln -sf "$HOME/$PROJECT_NAME/lua" $HOME/.config/nvim/
+ln -sf "$HOME/$PROJECT_NAME/zshrc" $HOME/.zshrc
+ln -sf "$HOME/$PROJECT_NAME/tmux.conf" $HOME/.tmux.conf
 
 # Install tpm
 rm -rf $HOME/.tmux/plugins/tpm
 git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
+
+echo "Installation completed successfully!"
+echo "Project linked as: $HOME/$PROJECT_NAME"
+echo "Config files linked to: $HOME/.config/nvim/"
