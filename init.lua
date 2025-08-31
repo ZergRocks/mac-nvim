@@ -1,6 +1,10 @@
 -- Load core settings first
 require("core")
 
+-- Load deprecated API fixes before plugins
+-- This provides compatibility for plugins using deprecated Neovim APIs
+require("deprecated_fixes")
+
 -- Setup lazy.nvim plugin manager
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then

@@ -189,47 +189,83 @@ return {
   -- Tmux integration
   "alexghergh/nvim-tmux-navigation",
 
-  -- Formatting
+  -- Formatting with conform.nvim
   {
-    "nvimtools/none-ls.nvim",
-    commit = "7e146f3a188853843bb4ca1bff24c912bb9b7177",
+    "stevearc/conform.nvim",
     dependencies = { "williamboman/mason.nvim" },
+    event = { "BufWritePre" },
+    cmd = { "ConformInfo" },
+    keys = {
+      {
+        "<leader>f",
+        function()
+          require("conform").format({ async = true, lsp_fallback = true })
+        end,
+        mode = "",
+        desc = "Format buffer",
+      },
+    },
     config = function()
-      local null_ls = require("null-ls")
-      null_ls.setup({
-        sources = {
-          -- lua
-          null_ls.builtins.formatting.stylua,
-
-          -- js
-          null_ls.builtins.formatting.eslint_d,
-          null_ls.builtins.diagnostics.eslint_d,
-
-          -- python
-          null_ls.builtins.diagnostics.ruff.with({ extra_args = { "--extend-select", "I" } }),
-          null_ls.builtins.formatting.ruff.with({ extra_args = { "--extend-select", "I" } }),
-          null_ls.builtins.formatting.ruff_format,
-
-          -- sql
-          null_ls.builtins.diagnostics.sqlfluff.with({
-            extra_args = { "--dialect", "snowflake" },
-          }),
-          null_ls.builtins.formatting.sqlfluff.with({
-            extra_args = { "--dialect", "snowflake", "-f", "-q", "--FIX-EVEN-UNPARSABLE" },
-          }),
+      require("conform").setup({
+        formatters_by_ft = {
+          lua = { "stylua" },
+          python = { "ruff_format", "ruff_organize_imports" },
+          javascript = { "eslint_d", "prettier" },
+          typescript = { "eslint_d", "prettier" },
+          javascriptreact = { "eslint_d", "prettier" },
+          typescriptreact = { "eslint_d", "prettier" },
+          sql = { "sqlfluff" },
+          json = { "prettier" },
+          yaml = { "prettier" },
+          markdown = { "prettier" },
         },
-        diagnostics_format = "[#{c}] #{m} (#{s})",
-        debounce = 250,
+        format_on_save = {
+          timeout_ms = 500,
+          lsp_fallback = true,
+        },
       })
     end,
   },
+
+  -- Linting with nvim-lint
   {
-    "jay-babu/mason-null-ls.nvim",
-    dependencies = { "williamboman/mason.nvim", "nvimtools/none-ls.nvim" },
+    "mfussenegger/nvim-lint",
+    dependencies = { "williamboman/mason.nvim" },
+    event = { "BufReadPre", "BufNewFile" },
     config = function()
-      require("mason-null-ls").setup({
+      local lint = require("lint")
+      lint.linters_by_ft = {
+        javascript = { "eslint_d" },
+        typescript = { "eslint_d" },
+        javascriptreact = { "eslint_d" },
+        typescriptreact = { "eslint_d" },
+        python = { "ruff" },
+        sql = { "sqlfluff" },
+      }
+
+      -- Create an autocommand to trigger linting
+      vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+        callback = function()
+          lint.try_lint()
+        end,
+      })
+    end,
+  },
+
+  -- Mason integration for formatters and linters
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    dependencies = { "williamboman/mason.nvim" },
+    config = function()
+      require("mason-tool-installer").setup({
+        ensure_installed = {
+          "stylua",
+          "eslint_d",
+          "prettier",
+          "ruff",
+          "sqlfluff",
+        },
         automatic_installation = true,
-        handlers = {},
       })
     end,
   },
