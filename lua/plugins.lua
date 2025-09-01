@@ -214,7 +214,7 @@ return {
           typescript = { "eslint_d", "prettier" },
           javascriptreact = { "eslint_d", "prettier" },
           typescriptreact = { "eslint_d", "prettier" },
-          sql = { "sqlfluff" },
+          sql = { "sqlfmt" },
           json = { "prettier" },
           yaml = { "prettier" },
           markdown = { "prettier" },
@@ -240,7 +240,8 @@ return {
         javascriptreact = { "eslint_d" },
         typescriptreact = { "eslint_d" },
         python = { "ruff" },
-        sql = { "sqlfluff" },
+        -- SQLFluff는 레거시 - sqlfmt 사용
+        -- sql = {},  -- Linting 비활성화 (sqlfmt는 포맷터만 제공)
       }
 
       -- Create an autocommand to trigger linting
@@ -263,7 +264,7 @@ return {
           "eslint_d",
           "prettier",
           "ruff",
-          "sqlfluff",
+          -- "sqlfluff",  -- 레거시, sqlfmt 사용
         },
         automatic_installation = true,
       })
