@@ -37,3 +37,6 @@ require("lazy").setup({
 
 -- Load keymaps after plugins are loaded
 require("keymaps")
+
+-- Load rock-solid clipboard solution
+require("clipboard_config")
