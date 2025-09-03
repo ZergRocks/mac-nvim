@@ -22,7 +22,13 @@ vim.keymap.set({ "n", "x" }, "tl", ":tabnext<CR>")
 
 vim.keymap.set({ "n", "x" }, "H", "^")
 vim.keymap.set({ "n", "x" }, "L", "g_")
-vim.keymap.set({ "n", "x", "v" }, "<Leader>y", '"*y')
+-- 시스템 클립보드로 복사 (macOS)
+vim.keymap.set({ "n" }, "<Leader>y", '"+y')
+vim.keymap.set({ "v", "x" }, "<Leader>y", '"+y')
+-- 전체 줄을 시스템 클립보드로 복사
+vim.keymap.set("n", "<Leader>Y", '"+yy')
+-- 줄 끝까지 시스템 클립보드로 복사
+vim.keymap.set("n", "<Leader>y$", '"+y$')
 vim.keymap.set("n", "<Leader>zz", ":%s/\\s\\+$//e<CR>")
 
 --------------------------

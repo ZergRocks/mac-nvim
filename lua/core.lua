@@ -48,6 +48,7 @@ vim.o.wildmenu = true
 vim.o.wildmode = "list:longest"
 vim.o.wrap = true
 vim.o.mouse = "a"
+vim.opt.clipboard = "unnamedplus"
 vim.o.updatetime = 100
 vim.o.timeoutlen = 400
 vim.o.termguicolors = true
