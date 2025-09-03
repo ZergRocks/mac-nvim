@@ -1,0 +1,28 @@
+# Claude 및 MCP 관련
+.claude/
+.serena/
+
+# Neovim
+lazy-lock.json
+.netrwhist
+
+# 백업 및 스왑 파일
+*.swp
+*.swo
+*~
+*.backup
+*.bak
+
+# OS 파일
+.DS_Store
+Thumbs.db
+
+# 임시 파일
+*.tmp
+*.temp
+*.log
+
+# 테스트 파일
+test_*.lua
+test_*.sh
+*_test.*

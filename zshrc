@@ -41,3 +41,12 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+
+# Created by `pipx` on 2025-09-01 01:56:13
+export PATH="$PATH:/Users/an/.local/bin"
+
+# Sensitive environment variables should be in ~/.zshrc.local
+# Example:
+# export GITHUB_TOKEN='your-token-here'
+# export AWS_VAULT_BACKEND=file
+# export AWS_VAULT_FILE_PASSPHRASE=""

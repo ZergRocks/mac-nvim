@@ -64,6 +64,26 @@ return {
 	},
 	"tpope/vim-surround",
 	"justinmk/vim-sneak",
+	
+	-- Multiple cursor support
+	{
+		"mg979/vim-visual-multi",
+		branch = "master",
+		config = function()
+			-- Visual Multi 설정
+			vim.g.VM_maps = {
+				['Find Under'] = '<C-n>',      -- Ctrl+n으로 같은 단어 선택
+				['Find Subword Under'] = '<C-n>',
+				['Select All'] = '<C-a>',       -- 모든 매치 선택
+				['Skip Region'] = '<C-x>',      -- 현재 선택 건너뛰기
+				['Remove Region'] = '<C-p>',    -- 선택 제거
+				['Add Cursor Down'] = '<C-Down>',
+				['Add Cursor Up'] = '<C-Up>',
+			}
+			vim.g.VM_theme = 'sand'
+			vim.g.VM_highlight_matches = 'underline'
+		end,
+	},
 	{
 		"mbbill/undotree",
 		config = function()
