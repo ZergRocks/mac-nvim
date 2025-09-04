@@ -114,6 +114,7 @@ return {
 					"pyright",
 					"ts_ls",
 					"eslint", -- ESLint LSP 추가
+					"sqlls",  -- SQL LSP 추가
 					"taplo",
 					"yamlls",
 				},
@@ -131,9 +132,11 @@ return {
 					"python",
 					"javascript",
 					"typescript",
+					"sql",           -- SQL 파서 추가
 					"yaml",
 					"json",
 					"markdown",
+					"jinja2",        -- dbt 템플릿용
 				},
 				indent = {
 					enable = true,
@@ -209,6 +212,22 @@ return {
 
 	-- Tmux integration
 	"alexghergh/nvim-tmux-navigation",
+
+	-- SQL and dbt support
+	{
+		"PedramNavid/dbt.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+		},
+		ft = { "sql", "md", "yaml" },
+		config = function()
+			require("dbt").setup({
+				project_dir = vim.fn.getcwd(),
+				profiles_dir = vim.fn.expand("~/.dbt"),
+			})
+		end,
+	},
 
 	-- Formatting with conform.nvim
 	{
@@ -360,8 +379,7 @@ return {
 				javascriptreact = { "eslint_d" },
 				typescriptreact = { "eslint_d" },
 				python = { "ruff" },
-				-- SQLFluff는 레거시 - sqlfmt 사용
-				-- sql = {},  -- Linting 비활성화 (sqlfmt는 포맷터만 제공)
+				sql = { "sqlfluff" },  -- SQL 린터 활성화 (dbt 지원)
 			}
 
 			-- Create an autocommand to trigger linting
@@ -384,7 +402,8 @@ return {
 					"eslint_d",
 					"prettier",
 					"ruff",
-					-- "sqlfluff",  -- 레거시, sqlfmt 사용
+					"sqlfmt",    -- SQL 포매터
+					"sqlfluff",  -- SQL 린터 (dbt 지원)
 				},
 				automatic_installation = true,
 			})
