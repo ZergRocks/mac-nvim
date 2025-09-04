@@ -2,6 +2,7 @@
 -- 각 탭이 독립적인 버퍼 세트를 가지도록 보장
 
 local M = {}
+local safe_api = require("safe_api")
 
 -- 디버그 모드
 M.debug = false
@@ -49,6 +50,11 @@ end
 -- 현재 탭에 버퍼 추가
 local function add_buffer_to_tab_impl(bufnr)
 	init_tab_buffers()
+	
+	-- nil 체크 추가
+	if not bufnr or type(bufnr) ~= "number" then
+		return
+	end
 	
 	if not is_valid_buffer(bufnr) then
 		return
@@ -160,7 +166,11 @@ function M.tab_local_bnext()
 	
 	local next_buf = vim.t.tab_buffers[vim.t.tab_current_index]
 	if next_buf and is_valid_buffer(next_buf) then
-		vim.cmd("buffer " .. next_buf)
+		-- 안전한 버퍼 전환
+		local ok, err = safe_api.safe_buffer_switch(next_buf)
+		if not ok then
+			debug_print("버퍼 전환 실패: " .. (err or "알 수 없는 오류"))
+		end
 		debug_print("버퍼 " .. next_buf .. "로 이동 (인덱스: " .. vim.t.tab_current_index .. ")")
 	end
 end
@@ -186,7 +196,11 @@ function M.tab_local_bprev()
 	
 	local prev_buf = vim.t.tab_buffers[vim.t.tab_current_index]
 	if prev_buf and is_valid_buffer(prev_buf) then
-		vim.cmd("buffer " .. prev_buf)
+		-- 안전한 버퍼 전환
+		local ok, err = safe_api.safe_buffer_switch(prev_buf)
+		if not ok then
+			debug_print("버퍼 전환 실패: " .. (err or "알 수 없는 오류"))
+		end
 		debug_print("버퍼 " .. prev_buf .. "로 이동 (인덱스: " .. vim.t.tab_current_index .. ")")
 	end
 end
@@ -200,12 +214,19 @@ function M.tab_local_bdelete()
 	
 	-- 현재 버퍼가 변경되었다면 이전 버퍼 삭제
 	if vim.api.nvim_get_current_buf() ~= current_buf then
-		vim.cmd("bdelete " .. current_buf)
-		M.remove_buffer_from_tab(current_buf)
+		local ok = safe_api.safe_buffer_delete(current_buf)
+		if ok then
+			M.remove_buffer_from_tab(current_buf)
+		else
+			debug_print("버퍼 삭제 실패: " .. current_buf)
+		end
 	else
 		-- 마지막 버퍼인 경우
-		vim.cmd("enew")
-		vim.cmd("bdelete " .. current_buf)
+		safe_api.safe_cmd("enew")
+		local ok = safe_api.safe_buffer_delete(current_buf)
+		if ok then
+			M.remove_buffer_from_tab(current_buf)
+		end
 		M.remove_buffer_from_tab(current_buf)
 	end
 end

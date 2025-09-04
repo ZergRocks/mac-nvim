@@ -1,6 +1,10 @@
 -- Load core settings first
 require("core")
 
+-- Load safe API module for error prevention
+local safe_api = require("safe_api")
+safe_api.setup({ debug = false })
+
 -- Load deprecated API fixes before plugins
 -- This provides compatibility for plugins using deprecated Neovim APIs
 require("deprecated_fixes")
