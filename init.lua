@@ -49,3 +49,6 @@ require("formatter_debug")
 
 -- Load tabby configuration for tab management
 require("tabby_config")
+
+-- Load winbar buffer display
+require("winbar_buffers").setup()

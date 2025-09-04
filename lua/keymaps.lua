@@ -35,7 +35,8 @@ vim.keymap.set("n", "<Leader>zz", ":%s/\\s\\+$//e<CR>")
 vim.keymap.set("n", "<Leader>h", ":bprevious<CR>", { desc = "이전 버퍼" })
 vim.keymap.set("n", "<Leader>l", ":bnext<CR>", { desc = "다음 버퍼" })
 vim.keymap.set("n", "<Leader>bd", ":bdelete<CR>", { desc = "버퍼 삭제" })
-vim.keymap.set("n", "<Leader>bb", ":Buffers<CR>", { desc = "버퍼 목록" })
+vim.keymap.set("n", "<Leader>bb", ":Buffers<CR>", { desc = "버퍼 목록 (fzf)" })
+-- Winbar 버퍼 빠른 전환 (,1 ~ ,9는 winbar_buffers.lua에서 설정)
 
 --------------------------
 -- nvim-tmux-navigation --
