@@ -46,3 +46,6 @@ require("sql_config")
 
 -- Load formatter debug helper
 require("formatter_debug")
+
+-- Load tabby configuration for tab management
+require("tabby_config")

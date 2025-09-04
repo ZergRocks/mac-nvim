@@ -31,6 +31,12 @@ vim.keymap.set("n", "<Leader>Y", '"+yy')
 vim.keymap.set("n", "<Leader>y$", '"+y$')
 vim.keymap.set("n", "<Leader>zz", ":%s/\\s\\+$//e<CR>")
 
+-- 버퍼 네비게이션 (각 탭 내에서)
+vim.keymap.set("n", "<Leader>h", ":bprevious<CR>", { desc = "이전 버퍼" })
+vim.keymap.set("n", "<Leader>l", ":bnext<CR>", { desc = "다음 버퍼" })
+vim.keymap.set("n", "<Leader>bd", ":bdelete<CR>", { desc = "버퍼 삭제" })
+vim.keymap.set("n", "<Leader>bb", ":Buffers<CR>", { desc = "버퍼 목록" })
+
 --------------------------
 -- nvim-tmux-navigation --
 local status_ok, nvim_tmux_nav = pcall(require, "nvim-tmux-navigation")
@@ -52,7 +58,7 @@ vim.keymap.set("n", "<Leader>nt", ":NvimTreeFindFileToggle<CR>")
 vim.keymap.set("n", "<Leader>f", ":Files<CR>")
 vim.keymap.set("n", "<Leader>b", ":Buffer<CR>")
 vim.keymap.set("n", "<Leader>bl", ":BLines<CR>")
-vim.keymap.set("n", "<Leader>l", ":Lines<CR>")
+vim.keymap.set("n", "<Leader>fl", ":Lines<CR>", { desc = "fzf Lines 검색" })
 vim.keymap.set("n", "<Leader>gf", ":GFiles<CR>")
 vim.keymap.set("n", "<Leader>gs", ":GFiles?<CR>")
 vim.keymap.set("n", "<Leader>gco", ":Commits<CR>")

@@ -34,10 +34,36 @@ return {
 		end,
 	},
 	"nvim-tree/nvim-web-devicons",
+	-- 실제 탭 페이지를 표시하는 플러그인 (bufferline 대체)
 	{
-		"akinsho/bufferline.nvim",
+		"nanozuki/tabby.nvim",
+		dependencies = "nvim-tree/nvim-web-devicons",
 		config = function()
-			require("bufferline").setup()
+			require("tabby.tabline").use_preset("tab_only", {
+				theme = {
+					fill = "TabLineFill",
+					head = "TabLine",
+					current_tab = "TabLineSel",
+					tab = "TabLine",
+					win = "TabLine",
+					tail = "TabLine",
+				},
+				nerdfont = true,
+				lualine_theme = "solarized_light",
+				tab_name = {
+					name_fallback = function(tabid)
+						-- 탭 이름 표시 방식
+						local wins = vim.api.nvim_tabpage_list_wins(tabid)
+						local cur_win = vim.api.nvim_tabpage_get_win(tabid)
+						local name = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(cur_win))
+						if name == "" then
+							return "[No Name]"
+						else
+							return vim.fn.fnamemodify(name, ":t")
+						end
+					end,
+				},
+			})
 		end,
 	},
 
