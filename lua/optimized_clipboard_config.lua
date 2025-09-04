@@ -5,8 +5,14 @@
 if vim.fn.has('mac') == 1 then
   vim.g.clipboard = {
     name = 'macOS-clipboard',
-    copy = { ['+'] = 'pbcopy', ['*'] = 'pbcopy' },
-    paste = { ['+'] = 'pbpaste', ['*'] = 'pbpaste' },
+    copy = { 
+      ['+'] = {'pbcopy'}, 
+      ['*'] = {'pbcopy'} 
+    },
+    paste = { 
+      ['+'] = {'pbpaste'}, 
+      ['*'] = {'pbpaste'} 
+    },
     cache_enabled = 0,
   }
 end
@@ -14,8 +20,16 @@ end
 vim.opt.clipboard = "unnamedplus"
 
 -- 최적화된 키매핑 (직접 매핑으로 레이턴시 최소화)
-vim.keymap.set('v', '<Leader>y', '"+y', { 
+-- Visual과 Visual-line 모드 모두에서 작동하도록 설정
+vim.keymap.set({'v', 'x'}, '<Leader>y', '"+y', { 
   desc = 'Copy to clipboard (fast)', 
+  silent = true,
+  noremap = true 
+})
+
+-- Normal 모드에서 motion과 함께 사용 가능
+vim.keymap.set('n', '<Leader>y', '"+y', { 
+  desc = 'Copy with motion', 
   silent = true,
   noremap = true 
 })

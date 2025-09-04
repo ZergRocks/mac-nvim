@@ -2,7 +2,7 @@
 -- 각 윈도우 상단에 현재 탭의 버퍼 목록 표시
 
 local M = {}
-local safe_api = require("safe_api")
+-- local safe_api = require("safe_api") -- 일시 비활성화
 
 M.processing = false  -- 재귀 방지 플래그
 
@@ -89,12 +89,9 @@ function _G.WinbarBufferClick(bufnr)
 		return ""
 	end
 	
-	-- 안전한 버퍼 전환
-	local ok, err = safe_api.safe_buffer_switch(bufnr)
-	if not ok then
-		if M.debug then
-			print("버퍼 전환 실패: " .. (err or "알 수 없는 오류"))
-		end
+	-- 버퍼 전환
+	if vim.api.nvim_buf_is_valid(bufnr) then
+		pcall(vim.cmd, "buffer " .. bufnr)
 	end
 	return ""  -- 클릭 핸들러는 빈 문자열 반환
 end
@@ -126,10 +123,10 @@ end
 function M.switch_to_buffer(index)
 	local buffers = M.get_tab_buffers()
 	if buffers[index] then
-		-- 안전한 버퍼 전환
-		local ok, err = safe_api.safe_buffer_switch(buffers[index])
+		-- 버퍼 전환
+		local ok = pcall(vim.cmd, "buffer " .. buffers[index])
 		if not ok then
-			print("버퍼 " .. index .. " 전환 실패: " .. (err or "알 수 없는 오류"))
+			print("버퍼 " .. index .. " 전환 실패")
 			return
 		end
 		-- tab_buffer_isolation의 인덱스도 업데이트

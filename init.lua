@@ -2,8 +2,9 @@
 require("core")
 
 -- Load safe API module for error prevention
-local safe_api = require("safe_api")
-safe_api.setup({ debug = false })
+-- 일시적으로 비활성화 (테스트 중)
+-- local safe_api = require("safe_api")
+-- safe_api.setup({ debug = false })
 
 -- Load deprecated API fixes before plugins
 -- This provides compatibility for plugins using deprecated Neovim APIs
@@ -39,11 +40,11 @@ require("lazy").setup({
   concurrency = 50,
 })
 
--- Load keymaps after plugins are loaded
-require("keymaps")
-
--- Load optimized fast clipboard solution
+-- Load optimized fast clipboard solution FIRST (priority over keymaps)
 require("optimized_clipboard_config")
+
+-- Load keymaps after clipboard (so clipboard mappings take priority)
+require("keymaps")
 
 -- Load SQL and dbt configuration
 require("sql_config")
