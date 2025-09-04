@@ -43,3 +43,6 @@ require("optimized_clipboard_config")
 
 -- Load SQL and dbt configuration
 require("sql_config")
+
+-- Load formatter debug helper
+require("formatter_debug")

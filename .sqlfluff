@@ -1,0 +1,39 @@
+# sqlfluff configuration for dbt-Snowflake
+[sqlfluff]
+# Snowflake dialect for proper syntax support
+dialect = snowflake
+
+# dbt templater for Jinja support
+templater = dbt
+
+# Exclude paths
+exclude_rules = L027,L028,L031
+
+# Max line length
+max_line_length = 120
+
+[sqlfluff:templater:dbt]
+# dbt project configuration
+project_dir = .
+profiles_dir = ~/.dbt
+
+[sqlfluff:rules]
+# Allow subqueries in join clauses
+forbid_subquery_in = 
+
+[sqlfluff:rules:L010]
+# Keywords casing - uppercase
+capitalisation_policy = upper
+
+[sqlfluff:rules:L014]
+# Identifiers casing - lowercase
+extended_capitalisation_policy = lower
+
+[sqlfluff:rules:L042]
+# Subqueries should not be used in a WHERE clause
+forbid_subquery_in = both
+
+[sqlfluff:rules:L052]
+# Semi-colon formatting
+multiline_newline = True
+require_final_semicolon = False

@@ -1,0 +1,22 @@
+# sqlfmt configuration for SQL formatting
+[tool.sqlfmt]
+# Line length
+line_length = 120
+
+# Preserve blank lines
+preserve_newlines = true
+
+# Uppercase keywords
+uppercase = true
+
+# Dialect-specific settings
+dialect = "snowflake"
+
+# Indent width
+indent_width = 4
+
+# Trailing commas
+trailing_commas = true
+
+# Normalize expressions
+normalize = true

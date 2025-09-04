@@ -226,7 +226,17 @@ return {
 			{
 				"<space>f",
 				function()
-					require("conform").format({ async = true, lsp_fallback = true })
+					require("conform").format({ 
+						async = true, 
+						lsp_fallback = true,
+						timeout_ms = 5000,
+					}, function(err)
+						if err then
+							vim.notify("포맷팅 실패: " .. tostring(err), vim.log.levels.ERROR)
+						else
+							vim.notify("포맷팅 완료", vim.log.levels.INFO)
+						end
+					end)
 				end,
 				mode = "",
 				desc = "Format buffer",
@@ -339,7 +349,9 @@ return {
 					typescript = get_js_formatters,
 					javascriptreact = get_js_formatters,
 					typescriptreact = get_js_formatters,
-					sql = { "sqlfmt" },
+					-- SQL formatting with sqlfmt (dbt/Snowflake compatible)
+				sql = { "sqlfmt" },
+				dbt = { "sqlfmt" },  -- dbt files also use sqlfmt
 					-- JSON/YAML/Markdown: 항상 prettier 사용
 					json = { "prettier" },
 					yaml = { "prettier" },
@@ -366,7 +378,7 @@ return {
 				javascriptreact = { "eslint_d" },
 				typescriptreact = { "eslint_d" },
 				python = { "ruff" },
-				sql = { "sqlfluff" },  -- SQL 린터 활성화 (dbt 지원)
+				-- sql = { "sqlfluff" },  -- sqlfluff는 dbt 템플릿 때문에 임시 비활성화
 			}
 
 			-- Create an autocommand to trigger linting
