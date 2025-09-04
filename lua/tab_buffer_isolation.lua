@@ -5,11 +5,28 @@ local M = {}
 
 -- 디버그 모드
 M.debug = false
+M.processing = false  -- 재귀 방지 플래그
 
 -- 디버그 출력
 local function debug_print(msg)
 	if M.debug then
 		print("[TabBuffer] " .. msg)
+	end
+end
+
+-- 재귀 방지 wrapper
+local function with_processing_guard(func)
+	return function(...)
+		if M.processing then
+			return
+		end
+		M.processing = true
+		local ok, result = pcall(func, ...)
+		M.processing = false
+		if not ok then
+			debug_print("Error: " .. result)
+		end
+		return result
 	end
 end
 
@@ -30,7 +47,7 @@ local function is_valid_buffer(bufnr)
 end
 
 -- 현재 탭에 버퍼 추가
-function M.add_buffer_to_tab(bufnr)
+local function add_buffer_to_tab_impl(bufnr)
 	init_tab_buffers()
 	
 	if not is_valid_buffer(bufnr) then
@@ -48,14 +65,18 @@ function M.add_buffer_to_tab(bufnr)
 	table.insert(vim.t.tab_buffers, bufnr)
 	debug_print("버퍼 " .. bufnr .. " 추가됨. 현재 목록: " .. vim.inspect(vim.t.tab_buffers))
 	
-	-- Winbar 업데이트
-	if _G.WinbarBuffersModule then
-		_G.WinbarBuffersModule.update_winbar()
+	-- Winbar 업데이트 (재귀 방지)
+	if _G.WinbarBuffersModule and not M.processing then
+		vim.schedule(function()
+			_G.WinbarBuffersModule.update_winbar()
+		end)
 	end
 end
 
+M.add_buffer_to_tab = with_processing_guard(add_buffer_to_tab_impl)
+
 -- 현재 탭에서 버퍼 제거
-function M.remove_buffer_from_tab(bufnr)
+local function remove_buffer_from_tab_impl(bufnr)
 	init_tab_buffers()
 	
 	for i, b in ipairs(vim.t.tab_buffers) do
@@ -74,11 +95,15 @@ function M.remove_buffer_from_tab(bufnr)
 		end
 	end
 	
-	-- Winbar 업데이트
-	if _G.WinbarBuffersModule then
-		_G.WinbarBuffersModule.update_winbar()
+	-- Winbar 업데이트 (재귀 방지)
+	if _G.WinbarBuffersModule and not M.processing then
+		vim.schedule(function()
+			_G.WinbarBuffersModule.update_winbar()
+		end)
 	end
 end
+
+M.remove_buffer_from_tab = with_processing_guard(remove_buffer_from_tab_impl)
 
 -- 현재 탭의 버퍼 리스트 정리 (유효하지 않은 버퍼 제거)
 function M.cleanup_tab_buffers()
@@ -218,34 +243,37 @@ function M.setup()
 	-- Autocmd 그룹
 	local group = vim.api.nvim_create_augroup("TabBufferIsolation", { clear = true })
 	
-	-- 새 버퍼 진입 시 현재 탭에 추가
-	vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
+	-- 새 버퍼 진입 시 현재 탭에 추가 - 더 안전한 조건
+	vim.api.nvim_create_autocmd("BufWinEnter", {
 		group = group,
 		callback = function(args)
-			-- 특수 버퍼 제외
+			-- 재귀 방지 및 특수 버퍼 제외
+			if M.processing then return end
+			
 			local ft = vim.bo[args.buf].filetype
 			local exclude_ft = {
 				"NvimTree", "nvim-tree", "neo-tree",
 				"help", "dashboard", "alpha",
-				"fzf", "telescope", "TelescopePrompt"
+				"fzf", "telescope", "TelescopePrompt",
+				"qf", "quickfix"
 			}
 			
 			if not vim.tbl_contains(exclude_ft, ft) then
-				M.add_buffer_to_tab(args.buf)
+				vim.schedule(function()
+					M.add_buffer_to_tab(args.buf)
+				end)
 			end
 		end,
 	})
 	
-	-- 버퍼 삭제 시 탭에서 제거
+	-- 버퍼 삭제 시 탭에서 제거 - 단순화
 	vim.api.nvim_create_autocmd("BufDelete", {
 		group = group,
 		callback = function(args)
-			-- 모든 탭에서 제거
-			for _, tabpage in ipairs(vim.api.nvim_list_tabpages()) do
-				vim.api.nvim_tabpage_call(tabpage, function()
-					M.remove_buffer_from_tab(args.buf)
-				end)
-			end
+			if M.processing then return end
+			vim.schedule(function()
+				M.remove_buffer_from_tab(args.buf)
+			end)
 		end,
 	})
 	
@@ -253,9 +281,12 @@ function M.setup()
 	vim.api.nvim_create_autocmd("TabEnter", {
 		group = group,
 		callback = function()
-			init_tab_buffers()
-			M.cleanup_tab_buffers()
-			debug_print("탭 진입. 버퍼 목록: " .. vim.inspect(vim.t.tab_buffers or {}))
+			if M.processing then return end
+			vim.schedule(function()
+				init_tab_buffers()
+				M.cleanup_tab_buffers()
+				debug_print("탭 진입. 버퍼 목록: " .. vim.inspect(vim.t.tab_buffers or {}))
+			end)
 		end,
 	})
 	
@@ -263,6 +294,7 @@ function M.setup()
 	vim.api.nvim_create_autocmd("TabNew", {
 		group = group,
 		callback = function()
+			if M.processing then return end
 			vim.schedule(function()
 				init_tab_buffers()
 				local current_buf = vim.api.nvim_get_current_buf()
@@ -288,9 +320,10 @@ function M.setup()
 	end, { desc = "탭 버퍼 목록 정리" })
 	
 	-- 초기화
-	init_tab_buffers()
-	
-	print("✅ 탭별 버퍼 독립성 활성화됨")
+	vim.schedule(function()
+		init_tab_buffers()
+		print("✅ 탭별 버퍼 독립성 활성화됨")
+	end)
 end
 
 return M

@@ -3,6 +3,8 @@
 
 local M = {}
 
+M.processing = false  -- 재귀 방지 플래그
+
 -- 현재 탭의 모든 버퍼 가져오기 (tab_buffer_isolation과 동기화)
 function M.get_tab_buffers()
 	local current_buf = vim.api.nvim_get_current_buf()
@@ -88,13 +90,16 @@ function _G.WinbarBufferClick(bufnr)
 end
 
 
--- Winbar 업데이트
+-- Winbar 업데이트 (재귀 방지)
 function M.update_winbar()
+	if M.processing then return end
+	
 	-- 특정 파일 타입은 제외
 	local exclude_ft = {
 		"NvimTree", "nvim-tree", "neo-tree",
 		"help", "dashboard", "alpha",
-		"fzf", "telescope", "TelescopePrompt"
+		"fzf", "telescope", "TelescopePrompt",
+		"qf", "quickfix"
 	}
 	
 	if vim.tbl_contains(exclude_ft, vim.bo.filetype) then
@@ -102,7 +107,9 @@ function M.update_winbar()
 		return
 	end
 	
+	M.processing = true
 	vim.wo.winbar = M.create_winbar()
+	M.processing = false
 end
 
 -- 숫자 키로 버퍼 전환 (탭 로컬)
@@ -130,11 +137,14 @@ function M.setup()
 	-- Autocmd 그룹
 	local group = vim.api.nvim_create_augroup("WinbarBuffers", { clear = true })
 	
-	-- 버퍼 진입 시 Winbar 업데이트
-	vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
+	-- 버퍼 진입 시 Winbar 업데이트 - 더 안전하게
+	vim.api.nvim_create_autocmd("BufWinEnter", {
 		group = group,
 		callback = function()
-			M.update_winbar()
+			if M.processing then return end
+			vim.schedule(function()
+				M.update_winbar()
+			end)
 		end,
 	})
 	
@@ -143,11 +153,13 @@ function M.setup()
 		"TabEnter",
 		"BufModifiedSet",
 		"BufWritePost",
-		"BufDelete",
 	}, {
 		group = group,
 		callback = function()
-			M.update_winbar()
+			if M.processing then return end
+			vim.schedule(function()
+				M.update_winbar()
+			end)
 		end,
 	})
 	
@@ -155,6 +167,7 @@ function M.setup()
 	vim.api.nvim_create_autocmd("WinEnter", {
 		group = group,
 		callback = function()
+			if M.processing then return end
 			vim.schedule(function()
 				M.update_winbar()
 			end)
@@ -174,7 +187,9 @@ function M.setup()
 	end, { desc = "Winbar 버퍼 목록 새로고침" })
 	
 	-- 초기 업데이트
-	M.update_winbar()
+	vim.schedule(function()
+		M.update_winbar()
+	end)
 end
 
 return M
