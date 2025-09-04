@@ -3,39 +3,24 @@
 
 local M = {}
 
--- 현재 탭의 모든 버퍼 가져오기
+-- 현재 탭의 모든 버퍼 가져오기 (tab_buffer_isolation과 동기화)
 function M.get_tab_buffers()
-	local buffers = {}
 	local current_buf = vim.api.nvim_get_current_buf()
 	
-	-- 현재 탭의 모든 윈도우에서 버퍼 수집
-	local wins = vim.api.nvim_tabpage_list_wins(0)
-	local seen = {}
-	
-	for _, win in ipairs(wins) do
-		local buf = vim.api.nvim_win_get_buf(win)
-		if not seen[buf] and vim.api.nvim_buf_is_valid(buf) 
-			and vim.bo[buf].buflisted then
-			seen[buf] = true
-			table.insert(buffers, buf)
-		end
-	end
-	
-	-- 열려있지 않은 버퍼도 포함 (이전에 열었던 버퍼)
-	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-		if not seen[buf] and vim.api.nvim_buf_is_valid(buf)
-			and vim.bo[buf].buflisted 
-			and vim.fn.bufname(buf) ~= "" then
-			-- 현재 탭에서 한번이라도 열었던 버퍼인지 확인
-			local buf_tabnr = vim.fn.getbufvar(buf, "__last_tab")
-			local current_tabnr = vim.api.nvim_get_current_tabpage()
-			if buf_tabnr == current_tabnr then
-				table.insert(buffers, buf)
+	-- tab_buffer_isolation의 탭 버퍼 리스트 사용
+	if vim.t.tab_buffers then
+		-- 유효한 버퍼만 필터링
+		local valid_buffers = {}
+		for _, bufnr in ipairs(vim.t.tab_buffers) do
+			if vim.api.nvim_buf_is_valid(bufnr) and vim.bo[bufnr].buflisted then
+				table.insert(valid_buffers, bufnr)
 			end
 		end
+		return valid_buffers, current_buf
+	else
+		-- 폴백: 탭 버퍼 리스트가 없으면 빈 리스트
+		return {}, current_buf
 	end
-	
-	return buffers, current_buf
 end
 
 -- 버퍼 정보 포맷팅
@@ -102,12 +87,6 @@ function _G.WinbarBufferClick(bufnr)
 	return ""  -- 클릭 핸들러는 빈 문자열 반환
 end
 
--- 현재 탭 추적
-function M.track_buffer_tab()
-	local buf = vim.api.nvim_get_current_buf()
-	local tab = vim.api.nvim_get_current_tabpage()
-	vim.fn.setbufvar(buf, "__last_tab", tab)
-end
 
 -- Winbar 업데이트
 function M.update_winbar()
@@ -126,11 +105,15 @@ function M.update_winbar()
 	vim.wo.winbar = M.create_winbar()
 end
 
--- 숫자 키로 버퍼 전환
+-- 숫자 키로 버퍼 전환 (탭 로컬)
 function M.switch_to_buffer(index)
 	local buffers = M.get_tab_buffers()
 	if buffers[index] then
 		vim.cmd("buffer " .. buffers[index])
+		-- tab_buffer_isolation의 인덱스도 업데이트
+		if vim.t.tab_buffers then
+			vim.t.tab_current_index = index
+		end
 	else
 		print("버퍼 " .. index .. "가 없습니다")
 	end
@@ -138,17 +121,19 @@ end
 
 -- 설정 초기화
 function M.setup()
+	-- 전역 참조 (tab_buffer_isolation에서 사용)
+	_G.WinbarBuffersModule = M
+	
 	-- 색상 설정 로드
 	require("winbar_colors").setup()
 	
 	-- Autocmd 그룹
 	local group = vim.api.nvim_create_augroup("WinbarBuffers", { clear = true })
 	
-	-- 버퍼 탭 추적
+	-- 버퍼 진입 시 Winbar 업데이트
 	vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
 		group = group,
 		callback = function()
-			M.track_buffer_tab()
 			M.update_winbar()
 		end,
 	})

@@ -31,10 +31,19 @@ vim.keymap.set("n", "<Leader>Y", '"+yy')
 vim.keymap.set("n", "<Leader>y$", '"+y$')
 vim.keymap.set("n", "<Leader>zz", ":%s/\\s\\+$//e<CR>")
 
--- 버퍼 네비게이션 (각 탭 내에서)
-vim.keymap.set("n", "<Leader>h", ":bprevious<CR>", { desc = "이전 버퍼" })
-vim.keymap.set("n", "<Leader>l", ":bnext<CR>", { desc = "다음 버퍼" })
-vim.keymap.set("n", "<Leader>bd", ":bdelete<CR>", { desc = "버퍼 삭제" })
+-- 탭별 독립 버퍼 네비게이션 (각 탭의 버퍼만 순회)
+vim.keymap.set("n", "<Leader>h", function()
+	require("tab_buffer_isolation").tab_local_bprev()
+end, { desc = "이전 버퍼 (탭 로컬)" })
+
+vim.keymap.set("n", "<Leader>l", function()
+	require("tab_buffer_isolation").tab_local_bnext()
+end, { desc = "다음 버퍼 (탭 로컬)" })
+
+vim.keymap.set("n", "<Leader>bd", function()
+	require("tab_buffer_isolation").tab_local_bdelete()
+end, { desc = "버퍼 삭제 (탭 로컬)" })
+
 vim.keymap.set("n", "<Leader>bb", ":Buffers<CR>", { desc = "버퍼 목록 (fzf)" })
 -- Winbar 버퍼 빠른 전환 (,1 ~ ,9는 winbar_buffers.lua에서 설정)
 

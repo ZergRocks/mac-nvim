@@ -50,5 +50,8 @@ require("formatter_debug")
 -- Load tabby configuration for tab management
 require("tabby_config")
 
+-- Load tab buffer isolation (탭별 버퍼 독립성)
+require("tab_buffer_isolation").setup()
+
 -- Load winbar buffer display
 require("winbar_buffers").setup()
