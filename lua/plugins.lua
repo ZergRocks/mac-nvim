@@ -136,7 +136,7 @@ return {
 					"yaml",
 					"json",
 					"markdown",
-					"jinja2",        -- dbt 템플릿용
+					-- "jinja2",     -- 임시로 주석 처리 (설치 실패 가능)
 				},
 				indent = {
 					enable = true,
@@ -213,21 +213,8 @@ return {
 	-- Tmux integration
 	"alexghergh/nvim-tmux-navigation",
 
-	-- SQL and dbt support
-	{
-		"PedramNavid/dbt.nvim",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"nvim-treesitter/nvim-treesitter",
-		},
-		ft = { "sql", "md", "yaml" },
-		config = function()
-			require("dbt").setup({
-				project_dir = vim.fn.getcwd(),
-				profiles_dir = vim.fn.expand("~/.dbt"),
-			})
-		end,
-	},
+	-- SQL support (dbt 플러그인 제거 - 저장소가 존재하지 않음)
+	-- dbt는 기본 SQL 파서와 커스텀 설정으로 지원
 
 	-- Formatting with conform.nvim
 	{
