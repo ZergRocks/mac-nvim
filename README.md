@@ -5,6 +5,7 @@
 ## ✨ 주요 특징
 
 - **VSCode 스타일 탭-버퍼 관리**: barbar.nvim + scope.nvim으로 탭별 독립성 완벽 구현
+- **Python 개발 환경**: miniconda + pyright + ruff 통합
 - **빠른 시작**: lazy.nvim 지연 로딩으로 최적화
 - **통합 개발 환경**: LSP, 포매팅, Git, 파일 탐색 완벽 통합
 
@@ -14,7 +15,7 @@
 # 클론 및 설치
 git clone https://github.com/your-username/mac-nvim.git ~/Workspace/mac-nvim
 cd ~/Workspace/mac-nvim
-./install.sh
+./install.sh  # Homebrew, miniconda, Python 패키지 자동 설치
 
 # Neovim 실행
 nvim
@@ -86,12 +87,12 @@ mac-nvim/
 
 ## 🔧 지원 언어
 
-| 언어 | LSP | 포매터 |
-|-----|-----|--------|
-| Lua | lua_ls | stylua |
-| Python | pyright | ruff |
-| JavaScript/TypeScript | ts_ls | eslint_d/prettier |
-| JSON/YAML | yamlls | prettier |
+| 언어 | LSP | 포매터 | 패키지 관리 |
+|-----|-----|--------|------------|
+| Lua | lua_ls | stylua | - |
+| Python | pyright | ruff | miniconda |
+| JavaScript/TypeScript | ts_ls | eslint_d/prettier | npm |
+| JSON/YAML | yamlls | prettier | - |
 
 ## 📝 사용법
 
@@ -104,6 +105,9 @@ mac-nvim/
 
 # 건강 상태 확인
 :checkhealth
+
+# Python 환경 활성화 (터미널에서)
+conda activate base
 ```
 
 ## 라이센스

@@ -107,7 +107,20 @@ for package in "${CASK_PACKAGES[@]}"; do
     fi
 done
 
-# 3. Install Oh My Zsh
+# 3. Setup Python environment with miniconda
+print_info "Setting up Python environment..."
+if command -v conda &>/dev/null; then
+    print_status "Conda is already installed"
+    # Install essential Python packages for development
+    print_info "Installing Python development packages..."
+    conda install -y -c conda-forge python numpy pandas jupyter ipython 2>/dev/null || true
+    pip install --upgrade pip neovim pynvim 2>/dev/null || true
+    print_status "Python packages configured"
+else
+    print_warning "Conda not found. Install miniconda first for Python development"
+fi
+
+# 4. Install Oh My Zsh
 print_info "Checking Oh My Zsh installation..."
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
     print_warning "Oh My Zsh not found. Installing..."
@@ -117,7 +130,7 @@ else
     print_status "Oh My Zsh is already installed"
 fi
 
-# 4. Install Zsh plugins
+# 5. Install Zsh plugins
 print_info "Installing Zsh plugins..."
 
 # Zsh syntax highlighting
@@ -136,7 +149,7 @@ else
     print_status "zsh-autosuggestions already exists"
 fi
 
-# 5. Create necessary directories
+# 6. Create necessary directories
 print_info "Creating necessary directories..."
 
 # Vim temp directories
@@ -149,7 +162,7 @@ print_status "Vim temp directories created"
 mkdir -p "$HOME/.config/nvim"
 print_status "Neovim config directory created"
 
-# 6. Setup symlinks
+# 7. Setup symlinks
 print_info "Setting up configuration symlinks..."
 
 CURRENT_DIR=$(pwd)
