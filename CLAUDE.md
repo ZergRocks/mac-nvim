@@ -1,70 +1,70 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Claude Code (claude.ai/code)가 이 저장소 코드를 작업할 때 참조할 가이드입니다.
 
-## Repository Overview
+## 저장소 개요
 
-This is a macOS-optimized Neovim configuration repository that implements a VSCode-style development environment with Solarized Light theme. The configuration emphasizes tab-buffer independence (similar to VSCode), Python development support, and Git integration.
+Solarized Light 테마의 macOS 최적화 Neovim 설정 저장소입니다. 탭-버퍼 독립성, Python 개발 지원, Git 통합에 중점을 둡니다.
 
-## Core Architecture
+## 핵심 아키텍처
 
-### Configuration Loading Sequence
-1. `init.lua` - Entry point that bootstraps lazy.nvim and loads all modules
-2. `lua/settings.lua` - Basic Neovim options (loaded first)
-3. `lua/keymaps.lua` - Key mappings (loaded second)
-4. `lua/plugins.lua` - Plugin definitions via lazy.nvim spec
-5. `lua/lsp.lua` - LSP configurations (loaded as a plugin dependency)
+### 설정 로딩 순서
+1. `init.lua` - lazy.nvim을 부트스트랩하고 모든 모듈을 로드하는 진입점
+2. `lua/settings.lua` - 기본 Neovim 옵션 (첫 번째 로드)
+3. `lua/keymaps.lua` - 키 매핑 (두 번째 로드)
+4. `lua/plugins.lua` - lazy.nvim 스펙을 통한 플러그인 정의
+5. `lua/lsp.lua` - 플러그인 의존성으로 로드되는 LSP 설정
 
-### Plugin Management Strategy
-- **lazy.nvim** as plugin manager with lazy loading disabled for simplicity
-- Plugins defined in `lua/plugins.lua` with inline configurations
-- LSP setup separated in `lua/lsp.lua` as a plugin module to ensure proper loading order
+### 플러그인 관리 전략
+- **lazy.nvim**을 플러그인 매니저로 사용, 단순함을 위해 지연 로딩 비활성화
+- `lua/plugins.lua`에서 인라인 설정과 함께 플러그인 정의
+- 올바른 로딩 순서를 보장하기 위해 `lua/lsp.lua`에 LSP 설정 분리
 
-### Key Design Decisions
-- **Tab-Buffer Independence**: Uses `barbar.nvim` + `scope.nvim` to replicate VSCode's tab behavior where each tab maintains its own buffer list
-- **LSP Architecture**: Mason manages LSP server installations, nvim-lspconfig handles configurations, with formatting delegated to conform.nvim (not native LSP formatting)
-- **Python Environment**: Integrated with miniconda, using pyright for LSP and ruff for formatting/linting
+### 주요 설계 결정사항
+- **탭-버퍼 독립성**: `barbar.nvim` + `scope.nvim`을 사용하여 각 탭이 독립적인 버퍼 목록을 유지
+- **LSP 아키텍처**: Mason이 LSP 서버 설치를 관리하고, nvim-lspconfig가 설정을 처리하며, 포매팅은 conform.nvim에 위임
+- **Python 환경**: miniconda와 통합되어 LSP에는 pyright, 포매팅/린팅에는 ruff 사용
 
-## Development Commands
+## 개발 명령어
 
-### Installation and Setup
+### 설치 및 설정
 ```bash
-# Full installation (Homebrew, packages, Python env, symlinks)
+# 전체 설치 (Homebrew, 패키지, Python 환경, 심볼릭 링크)
 ./install.sh
 
-# Manual Neovim setup after changes
+# 변경 후 수동 Neovim 설정
 nvim
-:Lazy sync              # Update/install plugins
-:Mason                  # Manage LSP servers
-:checkhealth           # Verify configuration
+:Lazy sync              # 플러그인 업데이트/설치
+:Mason                  # LSP 서버 관리
+:checkhealth           # 설정 검증
 ```
 
-### Configuration Testing
+### 설정 테스트
 ```bash
-# Test Neovim configuration
+# Neovim 설정 테스트
 nvim --headless -c 'checkhealth' -c 'qa'
 
-# Reload configuration without restart
-:source %              # In current file
-:source $MYVIMRC      # Reload init.lua
+# 재시작 없이 설정 다시 로드
+:source %              # 현재 파일에서
+:source $MYVIMRC      # init.lua 다시 로드
 ```
 
-### Plugin Management
+### 플러그인 관리
 ```bash
-# In Neovim
-:Lazy                  # Open plugin manager UI
-:Lazy sync            # Update all plugins
-:Lazy clean           # Remove unused plugins
-:Lazy profile         # Performance profiling
+# Neovim에서
+:Lazy                  # 플러그인 관리자 UI 열기
+:Lazy sync            # 모든 플러그인 업데이트
+:Lazy clean           # 사용하지 않는 플러그인 제거
+:Lazy profile         # 성능 프로파일링
 ```
 
-### LSP Operations
+### LSP 작업
 ```bash
-# In Neovim
-:Mason                # LSP server manager UI
-:MasonInstall pyright # Install specific LSP
-:LspInfo             # Current buffer LSP status
-:LspRestart          # Restart LSP servers
+# Neovim에서
+:Mason                # LSP 서버 관리자 UI
+:MasonInstall pyright # 특정 LSP 설치
+:LspInfo             # 현재 버퍼 LSP 상태
+:LspRestart          # LSP 서버 재시작
 ```
 
 ## File Relationships
