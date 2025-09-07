@@ -197,6 +197,22 @@ backup_if_exists "$HOME/.tmux.conf"
 ln -sf "$CURRENT_DIR/tmux.conf" "$HOME/.tmux.conf"
 print_status "Tmux configuration linked"
 
+# Setup .zshrc.local for sensitive data
+print_info "Setting up .zshrc.local for sensitive configuration..."
+if [ ! -f "$HOME/.zshrc.local" ]; then
+    if [ -f "$CURRENT_DIR/.zshrc.local.example" ]; then
+        cp "$CURRENT_DIR/.zshrc.local.example" "$HOME/.zshrc.local"
+        print_status ".zshrc.local created from template"
+        print_warning "Please edit ~/.zshrc.local and add your API keys and tokens"
+    else
+        touch "$HOME/.zshrc.local"
+        print_status "Empty .zshrc.local created"
+        print_info "Add your sensitive environment variables to ~/.zshrc.local"
+    fi
+else
+    print_status ".zshrc.local already exists"
+fi
+
 # 7. Install TPM (Tmux Plugin Manager)
 print_info "Installing Tmux Plugin Manager..."
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then

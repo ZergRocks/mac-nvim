@@ -1,4 +1,3 @@
--- LSP configuration that will be loaded after plugins
 return {
 	{
 		"neovim/nvim-lspconfig",
@@ -9,8 +8,6 @@ return {
 			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()
-			-- Use an on_attach function to only map the following keys
-			-- after the language server attaches to the current buffer
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 				callback = function(ev)
@@ -26,10 +23,6 @@ return {
 					vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, opts)
 					vim.keymap.set({ "n", "v" }, "<space>ca", vim.lsp.buf.code_action, opts)
 					vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-					-- 포맷팅은 conform.nvim의 <space>f가 처리하므로 제거
-					-- vim.keymap.set("n", "<space>f", function()
-					--   vim.lsp.buf.format({ async = true })
-					-- end, opts)
 				end,
 			})
 
@@ -37,7 +30,6 @@ return {
 
 			local lspconfig = require("lspconfig")
 
-			-- Python
 			lspconfig["pyright"].setup({
 				capabilities = capabilities,
 				settings = {
@@ -50,7 +42,6 @@ return {
 				},
 			})
 
-			-- Lua
 			lspconfig["lua_ls"].setup({
 				capabilities = capabilities,
 				settings = {
@@ -60,27 +51,32 @@ return {
 								"vim",
 							},
 						},
+						workspace = {
+							library = vim.api.nvim_get_runtime_file("", true),
+							checkThirdParty = false,
+						},
+						telemetry = {
+							enable = false,
+						},
 					},
 				},
 			})
 
-			-- ESLint LSP configuration
 			lspconfig["eslint"].setup({
 				capabilities = capabilities,
 				on_attach = function(client, bufnr)
-					-- ESLint의 포맷팅 기능 비활성화 (conform.nvim이 처리)
 					client.server_capabilities.documentFormattingProvider = false
 					client.server_capabilities.documentRangeFormattingProvider = false
 				end,
 				settings = {
 					validate = "on",
 					packageManager = "npm",
-					autoFixOnSave = false, -- conform.nvim이 처리하므로 비활성화
+					autoFixOnSave = false,
 					codeActionOnSave = {
-						enable = false, -- conform.nvim이 처리
+						enable = false,
 						mode = "all",
 					},
-					format = false, -- 포맷팅은 conform.nvim이 처리
+					format = false,
 					quiet = false,
 					onIgnoredFiles = "off",
 					rulesCustomizations = {},
@@ -88,44 +84,113 @@ return {
 					problems = {
 						shortenToSingleLine = false,
 					},
-					-- 프로젝트의 ESLint 설정 자동 감지
 					workingDirectory = {
 						mode = "auto",
 					},
 				},
 			})
 
-			-- TypeScript/JavaScript LSP
 			lspconfig["ts_ls"].setup({
 				capabilities = capabilities,
 				on_attach = function(client, bufnr)
-					-- TypeScript 서버의 포맷팅 기능 비활성화 (conform.nvim이 처리)
 					client.server_capabilities.documentFormattingProvider = false
 					client.server_capabilities.documentRangeFormattingProvider = false
 				end,
 				settings = {
 					typescript = {
-						format = {
-							enable = false, -- conform.nvim이 처리
+						updateImportsOnFileMove = { enabled = "always" },
+						suggest = {
+							completeFunctionCalls = true,
+						},
+						inlayHints = {
+							includeInlayParameterNameHints = "all",
+							includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+							includeInlayFunctionParameterTypeHints = true,
+							includeInlayVariableTypeHints = true,
+							includeInlayPropertyDeclarationTypeHints = true,
+							includeInlayFunctionLikeReturnTypeHints = true,
+							includeInlayEnumMemberValueHints = true,
 						},
 					},
 					javascript = {
-						format = {
-							enable = false, -- conform.nvim이 처리
+						updateImportsOnFileMove = { enabled = "always" },
+						suggest = {
+							completeFunctionCalls = true,
+						},
+						inlayHints = {
+							includeInlayParameterNameHints = "all",
+							includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+							includeInlayFunctionParameterTypeHints = true,
+							includeInlayVariableTypeHints = true,
+							includeInlayPropertyDeclarationTypeHints = true,
+							includeInlayFunctionLikeReturnTypeHints = true,
+							includeInlayEnumMemberValueHints = true,
 						},
 					},
 				},
 			})
 
-			-- Setup remaining LSP servers
-			local servers = { "taplo", "yamlls" }
+			lspconfig["rust_analyzer"].setup({
+				capabilities = capabilities,
+				settings = {
+					["rust-analyzer"] = {
+						check = {
+							command = "clippy",
+						},
+						cargo = {
+							allFeatures = true,
+						},
+					},
+				},
+			})
 
-			for _, server in ipairs(servers) do
-				lspconfig[server].setup({
-					capabilities = capabilities,
-				})
-			end
+			lspconfig["gopls"].setup({
+				capabilities = capabilities,
+				settings = {
+					gopls = {
+						analyses = {
+							unusedparams = true,
+						},
+						staticcheck = true,
+						gofumpt = true,
+					},
+				},
+			})
+
+			lspconfig["jsonls"].setup({
+				capabilities = capabilities,
+				settings = {
+					json = {
+						schemas = require("schemastore").json.schemas(),
+						validate = { enable = true },
+					},
+				},
+			})
+
+			lspconfig["yamlls"].setup({
+				capabilities = capabilities,
+				settings = {
+					yaml = {
+						schemas = require("schemastore").yaml.schemas(),
+					},
+				},
+			})
+
+			lspconfig["bashls"].setup({
+				capabilities = capabilities,
+			})
+
+			lspconfig["cssls"].setup({
+				capabilities = capabilities,
+			})
+
+			lspconfig["html"].setup({
+				capabilities = capabilities,
+			})
+
+			lspconfig["tailwindcss"].setup({
+				capabilities = capabilities,
+			})
 		end,
 	},
 }
-

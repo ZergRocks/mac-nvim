@@ -1,104 +1,85 @@
--- vim basics
-vim.keymap.set({ "i", "x" }, "<C-c>", "<C-[>")
-vim.keymap.set({ "i", "x" }, "<Left>", "<nop>")
-vim.keymap.set({ "i", "x" }, "<Down>", "<nop>")
-vim.keymap.set({ "i", "x" }, "<Up>", "<nop>")
-vim.keymap.set({ "i", "x" }, "<Right>", "<nop>")
+local map = vim.keymap.set
+local opts = { silent = true }
 
-vim.keymap.set({ "n", "x" }, "<C-J>", "<C-W>j")
-vim.keymap.set({ "n", "x" }, "<C-K>", "<C-W>k")
-vim.keymap.set({ "n", "x" }, "<C-H>", "<C-W>h")
-vim.keymap.set({ "n", "x" }, "<C-L>", "<C-W>l")
+map({ "i", "x" }, "<C-c>", "<C-[>")
+map({ "i", "x" }, "<Left>", "<nop>")
+map({ "i", "x" }, "<Down>", "<nop>")
+map({ "i", "x" }, "<Up>", "<nop>")
+map({ "i", "x" }, "<Right>", "<nop>")
 
--- VSCode 스타일 버퍼 네비게이션 (barbar 기반)
-vim.keymap.set({ "n", "x" }, "bn", ":BufferPrevious<CR>", { desc = "이전 버퍼", silent = true })
-vim.keymap.set({ "n", "x" }, "bm", ":BufferNext<CR>", { desc = "다음 버퍼", silent = true })
-vim.keymap.set({ "n", "x" }, "bd", ":BufferClose<CR>", { desc = "버퍼 삭제", silent = true })
-vim.keymap.set({ "n", "x" }, "td", ":tabclose<CR>")
-vim.keymap.set({ "n", "x" }, "tn", ":tabnew<CR>")
-vim.keymap.set({ "n", "x" }, "th", ":tabprev<CR>")
-vim.keymap.set({ "n", "x" }, "tj", ":tabfirst<CR>")
-vim.keymap.set({ "n", "x" }, "tk", ":tablast<CR>")
-vim.keymap.set({ "n", "x" }, "tl", ":tabnext<CR>")
+map({ "n", "x" }, "<C-J>", "<C-W>j")
+map({ "n", "x" }, "<C-K>", "<C-W>k")
+map({ "n", "x" }, "<C-H>", "<C-W>h")
+map({ "n", "x" }, "<C-L>", "<C-W>l")
 
-vim.keymap.set({ "n", "x" }, "H", "^")
-vim.keymap.set({ "n", "x" }, "L", "g_")
+map({ "n", "x" }, "bn", ":BufferPrevious<CR>", opts)
+map({ "n", "x" }, "bm", ":BufferNext<CR>", opts)
+map({ "n", "x" }, "bd", ":BufferClose<CR>", opts)
+map({ "n", "x" }, "td", ":tabclose<CR>")
+map({ "n", "x" }, "tn", ":tabnew<CR>")
+map({ "n", "x" }, "th", ":tabprev<CR>")
+map({ "n", "x" }, "tj", ":tabfirst<CR>")
+map({ "n", "x" }, "tk", ":tablast<CR>")
+map({ "n", "x" }, "tl", ":tabnext<CR>")
 
--- 클립보드 복사
-vim.keymap.set({ "n", "x" }, ",y", '"+y', { desc = "클립보드로 복사" })
-vim.keymap.set("n", ",pp", '"+p', { desc = "클립보드에서 붙여넣기" })
-vim.keymap.set("n", "<Leader>zz", ":%s/\\s\\+$//e<CR>")
+map({ "n", "x" }, "H", "^")
+map({ "n", "x" }, "L", "g_")
 
--- 전역 버퍼 네비게이션 (모든 탭의 버퍼 순회)
-vim.keymap.set("n", "<Leader>gn", ":bp<CR>", { desc = "이전 버퍼 (전역)" })
-vim.keymap.set("n", "<Leader>gm", ":bn<CR>", { desc = "다음 버퍼 (전역)" })
-vim.keymap.set("n", "<Leader>gd", ":bd<CR>", { desc = "버퍼 삭제 (전역)" })
+map({ "n", "x" }, ",y", '"+y')
+map("n", ",pp", '"+p')
+map("n", "<Leader>zz", ":%s/\\s\\+$//e<CR>")
 
-vim.keymap.set("n", "<Leader>bb", ":Buffers<CR>", { desc = "버퍼 목록 (fzf)" })
+map("n", "<Leader>gn", ":bp<CR>", opts)
+map("n", "<Leader>gm", ":bn<CR>", opts)
+map("n", "<Leader>gd", ":bd<CR>", opts)
 
---------------------------
--- nvim-tmux-navigation --
+map("n", "<Leader>bb", ":Buffers<CR>", opts)
+
 local status_ok, nvim_tmux_nav = pcall(require, "nvim-tmux-navigation")
 if status_ok then
   nvim_tmux_nav.setup({ disable_when_zoomed = true })
-  vim.keymap.set("n", "<C-h>", nvim_tmux_nav.NvimTmuxNavigateLeft)
-  vim.keymap.set("n", "<C-j>", nvim_tmux_nav.NvimTmuxNavigateDown)
-  vim.keymap.set("n", "<C-k>", nvim_tmux_nav.NvimTmuxNavigateUp)
-  vim.keymap.set("n", "<C-l>", nvim_tmux_nav.NvimTmuxNavigateRight)
+  map("n", "<C-h>", nvim_tmux_nav.NvimTmuxNavigateLeft)
+  map("n", "<C-j>", nvim_tmux_nav.NvimTmuxNavigateDown)
+  map("n", "<C-k>", nvim_tmux_nav.NvimTmuxNavigateUp)
+  map("n", "<C-l>", nvim_tmux_nav.NvimTmuxNavigateRight)
 end
 
----------------
--- nvim-tree --
-vim.keymap.set("n", "<Leader>nn", ":NvimTreeToggle<CR>")
-vim.keymap.set("n", "<Leader>nt", ":NvimTreeFindFileToggle<CR>")
+map("n", "<Leader>nn", ":NvimTreeToggle<CR>")
+map("n", "<Leader>nt", ":NvimTreeFindFileToggle<CR>")
 
----------
--- fzf --
-vim.keymap.set("n", "<Leader>f", ":Files<CR>")
-vim.keymap.set("n", "<Leader>b", ":Buffer<CR>")
-vim.keymap.set("n", "<Leader>bl", ":BLines<CR>")
-vim.keymap.set("n", "<Leader>fl", ":Lines<CR>", { desc = "fzf Lines 검색" })
-vim.keymap.set("n", "<Leader>gf", ":GFiles<CR>")
-vim.keymap.set("n", "<Leader>gs", ":GFiles?<CR>")
-vim.keymap.set("n", "<Leader>gco", ":Commits<CR>")
-vim.keymap.set("n", "<Leader>gbc", ":BCommits<CR>")
-vim.keymap.set("n", "<Leader>aa", ":Ag<CR>")
+map("n", "<Leader>f", ":Files<CR>")
+map("n", "<Leader>b", ":Buffer<CR>")
+map("n", "<Leader>bl", ":BLines<CR>")
+map("n", "<Leader>fl", ":Lines<CR>")
+map("n", "<Leader>gf", ":GFiles<CR>")
+map("n", "<Leader>gs", ":GFiles?<CR>")
+map("n", "<Leader>gco", ":Commits<CR>")
+map("n", "<Leader>gbc", ":BCommits<CR>")
+map("n", "<Leader>aa", ":Ag<CR>")
 
---------------
--- Fugitive --
-vim.keymap.set("n", "<Leader>gc", ":G checkout ")
-vim.keymap.set("n", "<Leader>gb", ":G branch ")
-vim.keymap.set("n", "<Leader>gm", ":G merge ")
-vim.keymap.set("n", "<Leader>gg", ":G blame<CR>")
-vim.keymap.set("n", "<Leader>gs", ":G<CR>")
-vim.keymap.set("n", "<Leader>gd", ":Gdiff<CR>")
-vim.keymap.set("n", "<Leader>gl", ":G log<CR>")
-vim.keymap.set("n", "<Leader>gfetch", ":G fetch origin<CR>")
-vim.keymap.set("n", "<Leader>ggl", ":G pull origin ")
-vim.keymap.set("n", "<Leader>gpp", ":G push origin ")
-vim.keymap.set("n", "<silent> <Leader>gw", ":Gwrite<CR>")
-vim.keymap.set("n", "<silent> <Leader>gr", ":Gread<CR>")
+map("n", "<Leader>gc", ":G checkout ")
+map("n", "<Leader>gb", ":G branch ")
+map("n", "<Leader>gm", ":G merge ")
+map("n", "<Leader>gg", ":G blame<CR>")
+map("n", "<Leader>gs", ":G<CR>")
+map("n", "<Leader>gd", ":Gdiff<CR>")
+map("n", "<Leader>gl", ":G log<CR>")
+map("n", "<Leader>gfetch", ":G fetch origin<CR>")
+map("n", "<Leader>ggl", ":G pull origin ")
+map("n", "<Leader>gpp", ":G push origin ")
+map("n", "<Leader>gw", ":Gwrite<CR>", opts)
+map("n", "<Leader>gr", ":Gread<CR>", opts)
 
---------------
--- Undotree --
-vim.keymap.set("n", "<Leader>u", ":UndotreeToggle<CR>:UndotreeFocus<CR>")
+map("n", "<Leader>u", ":UndotreeToggle<CR>:UndotreeFocus<CR>")
 
+map("n", "<Leader>p", ":Gitsigns preview_hunk_inline<CR>")
+map("n", "<Leader>m", ":Gitsigns toggle_current_line_blame<CR>")
+map("n", "<Leader>gh", ":Gitsigns diffthis<CR>")
 
-
-
---------------
--- gitsigns --
-vim.keymap.set("n", "<Leader>p", ":Gitsigns preview_hunk_inline<CR>")
-vim.keymap.set("n", "<Leader>m", ":Gitsigns toggle_current_line_blame<CR>")
-vim.keymap.set("n", "<Leader>gh", ":Gitsigns diffthis<CR>")
-
-
-------------
---  lsp  ---
-local opts = { noremap = true, silent = true }
-vim.keymap.set("n", "<space>e", vim.diagnostic.open_float, opts)
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist, opts)
+local lsp_opts = { noremap = true, silent = true }
+map("n", "<space>e", vim.diagnostic.open_float, lsp_opts)
+map("n", "[d", vim.diagnostic.goto_prev, lsp_opts)
+map("n", "]d", vim.diagnostic.goto_next, lsp_opts)
+map("n", "<space>q", vim.diagnostic.setloclist, lsp_opts)
 
 
