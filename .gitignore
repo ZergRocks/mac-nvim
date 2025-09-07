@@ -26,3 +26,15 @@ Thumbs.db
 test_*.lua
 test_*.sh
 *_test.*
+
+# 데이터 및 분석 파일 (제외)
+*.csv
+*.xlsx
+*.json
+*_analysis.md
+*_report.md
+
+# SQL 관련 (제외)
+.sqlfluff
+.sqlfmt.toml
+*.sql

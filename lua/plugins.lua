@@ -8,7 +8,88 @@ return {
 		end,
 	},
 
-	-- Essential UI
+	-- VSCode-style Buffer Line with Tab Independence
+	{
+		"romgrk/barbar.nvim",
+		dependencies = {
+			"lewis6991/gitsigns.nvim", -- OPTIONAL: for git status
+			"nvim-tree/nvim-web-devicons", -- OPTIONAL: for file icons
+		},
+		init = function() vim.g.barbar_auto_setup = false end,
+		config = function()
+			require("barbar").setup({
+				-- Enable/disable animations
+				animation = true,
+				-- Enable/disable auto-hiding the tab bar when there is a single buffer
+				auto_hide = false,
+				-- Enable/disable current/total tabpages indicator (top right corner)
+				tabpages = true,
+				-- Enable/disable close button
+				closable = true,
+				-- Enables/disable clickable tabs
+				clickable = true,
+				-- Exclude certain filetypes and buffer types from the tabline
+				exclude_ft = {'javascript'},
+				exclude_name = {'package.json'},
+				-- Show every buffer
+				hide = {extensions = false, inactive = false},
+				-- Enable/disable icons
+				icons = {
+					buffer_index = false,
+					buffer_number = false,
+					button = '',
+					-- Configure how filetype icons are displayed
+					filetype = {
+						enabled = true,
+					},
+					separator = {left = '▎', right = ''},
+					modified = {button = '●'},
+					pinned = {button = '車', filename = true},
+					preset = 'default',
+				},
+				-- If true, new buffers will be inserted at the start/end of the list
+				insert_at_end = false,
+				insert_at_start = false,
+				-- Sets the maximum padding width with which to surround each tab
+				maximum_padding = 1,
+				-- Sets the minimum padding width with which to surround each tab
+				minimum_padding = 1,
+				-- Sets the maximum buffer name length
+				maximum_length = 30,
+				-- Sets the minimum buffer name length
+				minimum_length = 0,
+				-- If set, the letters for each buffer in buffer-pick mode will be assigned based on their name
+				semantic_letters = true,
+				-- Set the filetypes which barbar will offset itself for
+				sidebar_filetypes = {
+					-- Use the default values: {event = 'BufWinLeave', text = nil}
+					NvimTree = true,
+				},
+				-- New buffer letters are assigned in this order
+				letters = 'asdfjkl;ghnmxcvbziowerutyqpASDFJKLGHNMXCVBZIOWERUTYQP',
+				-- Sets the name of unnamed buffers. By default format is "[Buffer X]"
+				no_name_title = nil,
+			})
+		end,
+	},
+	
+	-- Tab-local buffer independence
+	{
+		"tiagovla/scope.nvim",
+		config = function()
+			require("scope").setup({
+				hooks = {
+					pre_tab_leave = function()
+						vim.api.nvim_exec_autocmds('User', {pattern = 'ScopeTabLeavePre'})
+					end,
+					post_tab_enter = function()
+						vim.api.nvim_exec_autocmds('User', {pattern = 'ScopeTabEnterPost'})
+					end,
+				},
+			})
+		end,
+	},
+	-- Clean Status Line
 	{
 		"nvim-lualine/lualine.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -16,7 +97,18 @@ return {
 			require("lualine").setup({
 				options = {
 					theme = "solarized_light",
+					component_separators = { left = '', right = ''},
+					section_separators = { left = '', right = ''},
 				},
+				sections = {
+					lualine_a = {'mode'},
+					lualine_b = {'branch', 'diff', 'diagnostics'},
+					lualine_c = {'filename'},
+					lualine_x = {'encoding', 'fileformat', 'filetype'},
+					lualine_y = {'progress'},
+					lualine_z = {'location'}
+				},
+				extensions = { 'nvim-tree', 'fzf' }
 			})
 		end,
 	},
@@ -34,12 +126,6 @@ return {
 		end,
 	},
 	"nvim-tree/nvim-web-devicons",
-	{
-		"akinsho/bufferline.nvim",
-		config = function()
-			require("bufferline").setup()
-		end,
-	},
 
 	-- Core functionality
 	"nvim-lua/plenary.nvim",
@@ -114,6 +200,7 @@ return {
 					"pyright",
 					"ts_ls",
 					"eslint", -- ESLint LSP 추가
+					"sqlls",  -- SQL LSP 추가
 					"taplo",
 					"yamlls",
 				},
@@ -131,9 +218,11 @@ return {
 					"python",
 					"javascript",
 					"typescript",
+					"sql",           -- SQL 파서 추가
 					"yaml",
 					"json",
 					"markdown",
+					-- "jinja2",     -- 임시로 주석 처리 (설치 실패 가능)
 				},
 				indent = {
 					enable = true,
@@ -210,6 +299,9 @@ return {
 	-- Tmux integration
 	"alexghergh/nvim-tmux-navigation",
 
+	-- SQL support (dbt 플러그인 제거 - 저장소가 존재하지 않음)
+	-- dbt는 기본 SQL 파서와 커스텀 설정으로 지원
+
 	-- Formatting with conform.nvim
 	{
 		"stevearc/conform.nvim",
@@ -220,7 +312,17 @@ return {
 			{
 				"<space>f",
 				function()
-					require("conform").format({ async = true, lsp_fallback = true })
+					require("conform").format({ 
+						async = true, 
+						lsp_fallback = true,
+						timeout_ms = 5000,
+					}, function(err)
+						if err then
+							vim.notify("포맷팅 실패: " .. tostring(err), vim.log.levels.ERROR)
+						else
+							vim.notify("포맷팅 완료", vim.log.levels.INFO)
+						end
+					end)
 				end,
 				mode = "",
 				desc = "Format buffer",
@@ -333,7 +435,9 @@ return {
 					typescript = get_js_formatters,
 					javascriptreact = get_js_formatters,
 					typescriptreact = get_js_formatters,
-					sql = { "sqlfmt" },
+					-- SQL formatting with sqlfmt (dbt/Snowflake compatible)
+				sql = { "sqlfmt" },
+				dbt = { "sqlfmt" },  -- dbt files also use sqlfmt
 					-- JSON/YAML/Markdown: 항상 prettier 사용
 					json = { "prettier" },
 					yaml = { "prettier" },
@@ -360,8 +464,7 @@ return {
 				javascriptreact = { "eslint_d" },
 				typescriptreact = { "eslint_d" },
 				python = { "ruff" },
-				-- SQLFluff는 레거시 - sqlfmt 사용
-				-- sql = {},  -- Linting 비활성화 (sqlfmt는 포맷터만 제공)
+				-- sql = { "sqlfluff" },  -- sqlfluff는 dbt 템플릿 때문에 임시 비활성화
 			}
 
 			-- Create an autocommand to trigger linting
@@ -384,7 +487,8 @@ return {
 					"eslint_d",
 					"prettier",
 					"ruff",
-					-- "sqlfluff",  -- 레거시, sqlfmt 사용
+					"sqlfmt",    -- SQL 포매터
+					"sqlfluff",  -- SQL 린터 (dbt 지원)
 				},
 				automatic_installation = true,
 			})

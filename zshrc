@@ -50,3 +50,6 @@ export PATH="$PATH:/Users/an/.local/bin"
 # export GITHUB_TOKEN='your-token-here'
 # export AWS_VAULT_BACKEND=file
 # export AWS_VAULT_FILE_PASSPHRASE=""
+export PATH="$HOME/bin:$PATH"
+export GITHUB_TOKEN='***REMOVED***'
+export GITHUB_TOKEN='- ***REMOVED***'

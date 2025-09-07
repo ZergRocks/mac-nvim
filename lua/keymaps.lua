@@ -10,9 +10,10 @@ vim.keymap.set({ "n", "x" }, "<C-K>", "<C-W>k")
 vim.keymap.set({ "n", "x" }, "<C-H>", "<C-W>h")
 vim.keymap.set({ "n", "x" }, "<C-L>", "<C-W>l")
 
-vim.keymap.set({ "n", "x" }, "bn", ":bp<CR>")
-vim.keymap.set({ "n", "x" }, "bm", ":bn<CR>")
-vim.keymap.set({ "n", "x" }, "bd", ":bd<CR>")
+-- VSCode 스타일 버퍼 네비게이션 (barbar 기반)
+vim.keymap.set({ "n", "x" }, "bn", ":BufferPrevious<CR>", { desc = "이전 버퍼", silent = true })
+vim.keymap.set({ "n", "x" }, "bm", ":BufferNext<CR>", { desc = "다음 버퍼", silent = true })
+vim.keymap.set({ "n", "x" }, "bd", ":BufferClose<CR>", { desc = "버퍼 삭제", silent = true })
 vim.keymap.set({ "n", "x" }, "td", ":tabclose<CR>")
 vim.keymap.set({ "n", "x" }, "tn", ":tabnew<CR>")
 vim.keymap.set({ "n", "x" }, "th", ":tabprev<CR>")
@@ -22,14 +23,17 @@ vim.keymap.set({ "n", "x" }, "tl", ":tabnext<CR>")
 
 vim.keymap.set({ "n", "x" }, "H", "^")
 vim.keymap.set({ "n", "x" }, "L", "g_")
--- 시스템 클립보드로 복사 (macOS)
-vim.keymap.set({ "n" }, "<Leader>y", '"+y')
-vim.keymap.set({ "v", "x" }, "<Leader>y", '"+y')
--- 전체 줄을 시스템 클립보드로 복사
-vim.keymap.set("n", "<Leader>Y", '"+yy')
--- 줄 끝까지 시스템 클립보드로 복사
-vim.keymap.set("n", "<Leader>y$", '"+y$')
+-- 클립보드 키매핑은 optimized_clipboard_config.lua에서 처리
+-- (중복 제거)
 vim.keymap.set("n", "<Leader>zz", ":%s/\\s\\+$//e<CR>")
+
+-- 전역 버퍼 네비게이션 (모든 탭의 버퍼 순회)
+vim.keymap.set("n", "<Leader>gn", ":bp<CR>", { desc = "이전 버퍼 (전역)" })
+vim.keymap.set("n", "<Leader>gm", ":bn<CR>", { desc = "다음 버퍼 (전역)" })
+vim.keymap.set("n", "<Leader>gd", ":bd<CR>", { desc = "버퍼 삭제 (전역)" })
+
+vim.keymap.set("n", "<Leader>bb", ":Buffers<CR>", { desc = "버퍼 목록 (fzf)" })
+-- Winbar 버퍼 빠른 전환 (,1 ~ ,9는 winbar_buffers.lua에서 설정)
 
 --------------------------
 -- nvim-tmux-navigation --
@@ -52,7 +56,7 @@ vim.keymap.set("n", "<Leader>nt", ":NvimTreeFindFileToggle<CR>")
 vim.keymap.set("n", "<Leader>f", ":Files<CR>")
 vim.keymap.set("n", "<Leader>b", ":Buffer<CR>")
 vim.keymap.set("n", "<Leader>bl", ":BLines<CR>")
-vim.keymap.set("n", "<Leader>l", ":Lines<CR>")
+vim.keymap.set("n", "<Leader>fl", ":Lines<CR>", { desc = "fzf Lines 검색" })
 vim.keymap.set("n", "<Leader>gf", ":GFiles<CR>")
 vim.keymap.set("n", "<Leader>gs", ":GFiles?<CR>")
 vim.keymap.set("n", "<Leader>gco", ":Commits<CR>")
