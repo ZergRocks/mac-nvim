@@ -1,8 +1,5 @@
 -- Neovim 초기화 파일
 
--- Winbar는 tab_buffer_isolation.lua에서 전담 관리
--- (전역 winbar autocmd 제거로 탭별 독립성 확보)
-
 -- 기본 설정
 require("settings")
 
@@ -46,6 +43,3 @@ require("lazy").setup({
 		},
 	},
 })
-
--- 레거시 핫픽스 시스템 완전 제거됨
--- 이제 bufferline.nvim으로 전면 교체

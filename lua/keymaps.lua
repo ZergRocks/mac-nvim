@@ -35,7 +35,6 @@ vim.keymap.set("n", "<Leader>gm", ":bn<CR>", { desc = "다음 버퍼 (전역)" }
 vim.keymap.set("n", "<Leader>gd", ":bd<CR>", { desc = "버퍼 삭제 (전역)" })
 
 vim.keymap.set("n", "<Leader>bb", ":Buffers<CR>", { desc = "버퍼 목록 (fzf)" })
--- Winbar 버퍼 빠른 전환 (,1 ~ ,9는 winbar_buffers.lua에서 설정)
 
 --------------------------
 -- nvim-tmux-navigation --
