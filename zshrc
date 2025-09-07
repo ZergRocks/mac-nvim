@@ -51,5 +51,7 @@ export PATH="$PATH:/Users/an/.local/bin"
 # export AWS_VAULT_BACKEND=file
 # export AWS_VAULT_FILE_PASSPHRASE=""
 export PATH="$HOME/bin:$PATH"
-# GitHub token should be stored in .zshrc.local or as environment variable
-# export GITHUB_TOKEN='your-token-here'
+# Load local environment variables (tokens, API keys, etc.)
+if [ -f ~/.zshrc.local ]; then
+    source ~/.zshrc.local
+fi

@@ -2,6 +2,19 @@
 .claude/
 .serena/
 
+# 민감한 파일 및 로컬 설정
+.zshrc.local
+.env
+.env.local
+tokens-to-remove.txt
+*.pem
+*.key
+*.crt
+
+# BFG 보고서
+.bfg-report/
+*.bfg-report
+
 # Neovim
 lazy-lock.json
 .netrwhist
