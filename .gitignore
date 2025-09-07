@@ -51,3 +51,8 @@ test_*.sh
 .sqlfluff
 .sqlfmt.toml
 *.sql
+
+# Install.sh로 생성되는 순환 심볼릭 링크들
+mac-nvim
+*/lua
+lua/lua
