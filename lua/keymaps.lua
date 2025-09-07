@@ -23,8 +23,10 @@ vim.keymap.set({ "n", "x" }, "tl", ":tabnext<CR>")
 
 vim.keymap.set({ "n", "x" }, "H", "^")
 vim.keymap.set({ "n", "x" }, "L", "g_")
--- 클립보드 키매핑은 optimized_clipboard_config.lua에서 처리
--- (중복 제거)
+
+-- 클립보드 복사
+vim.keymap.set({ "n", "x" }, ",y", '"+y', { desc = "클립보드로 복사" })
+vim.keymap.set("n", ",pp", '"+p', { desc = "클립보드에서 붙여넣기" })
 vim.keymap.set("n", "<Leader>zz", ":%s/\\s\\+$//e<CR>")
 
 -- 전역 버퍼 네비게이션 (모든 탭의 버퍼 순회)
