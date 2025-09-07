@@ -51,5 +51,5 @@ export PATH="$PATH:/Users/an/.local/bin"
 # export AWS_VAULT_BACKEND=file
 # export AWS_VAULT_FILE_PASSPHRASE=""
 export PATH="$HOME/bin:$PATH"
-export GITHUB_TOKEN='***REMOVED***'
-export GITHUB_TOKEN='- ***REMOVED***'
+# GitHub token should be stored in .zshrc.local or as environment variable
+# export GITHUB_TOKEN='your-token-here'
