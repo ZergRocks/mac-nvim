@@ -165,18 +165,37 @@ print_status "Neovim config directory created"
 # 7. Setup symlinks
 print_info "Setting up configuration symlinks..."
 
+# 반드시 특정 경로에서만 실행되도록 강제
+REQUIRED_DIR="$HOME/Development/mac-nvim-config"
 CURRENT_DIR=$(pwd)
-PROJECT_NAME=$(basename "$CURRENT_DIR")
 
-# Create project symlink in home directory
-if [ "$PROJECT_NAME" != "mac-nvim" ]; then
-    print_warning "Project directory name is '$PROJECT_NAME', not 'mac-nvim'"
-    print_info "Creating symlink as '$PROJECT_NAME' in home directory"
+# 경로 검증
+if [ "$CURRENT_DIR" != "$REQUIRED_DIR" ]; then
+    print_error "ERROR: This script MUST be run from $REQUIRED_DIR"
+    print_info "Current location: $CURRENT_DIR"
+    
+    # 자동으로 올바른 위치로 이동 제안
+    if [ ! -d "$HOME/Development" ]; then
+        print_info "Creating ~/Development directory..."
+        mkdir -p "$HOME/Development"
+    fi
+    
+    if [ ! -d "$REQUIRED_DIR" ]; then
+        print_info "To fix this, run:"
+        echo "    mv '$CURRENT_DIR' '$REQUIRED_DIR'"
+        echo "    cd '$REQUIRED_DIR'"
+        echo "    ./install.sh"
+    else
+        print_error "$REQUIRED_DIR already exists!"
+        print_info "Please resolve the conflict manually"
+    fi
+    exit 1
 fi
 
-backup_if_exists "$HOME/$PROJECT_NAME"
-ln -sf "$CURRENT_DIR" "$HOME/$PROJECT_NAME"
-print_status "Project linked as: $HOME/$PROJECT_NAME"
+# 이제 안전하게 ~/mac-nvim 심볼릭 링크 생성
+backup_if_exists "$HOME/mac-nvim"
+ln -sf "$REQUIRED_DIR" "$HOME/mac-nvim"
+print_status "Project linked as: $HOME/mac-nvim → $REQUIRED_DIR"
 
 # Neovim configuration
 backup_if_exists "$HOME/.config/nvim/init.lua"

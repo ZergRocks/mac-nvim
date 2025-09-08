@@ -11,15 +11,24 @@
 
 ## 🚀 설치
 
+### ⚠️ 중요: 설치 경로
+이 프로젝트는 **반드시** `~/Development/mac-nvim-config`에 설치되어야 합니다.
+다른 경로에서는 install.sh가 실행되지 않습니다.
+
 ```bash
-# 클론 및 설치
-git clone https://github.com/your-username/mac-nvim.git ~/Workspace/mac-nvim
-cd ~/Workspace/mac-nvim
+# 올바른 설치 방법
+mkdir -p ~/Development
+git clone https://github.com/your-username/mac-nvim.git ~/Development/mac-nvim-config
+cd ~/Development/mac-nvim-config
 ./install.sh  # Homebrew, miniconda, Python 패키지 자동 설치
 
 # Neovim 실행
 nvim
 ```
+
+### 📍 경로 구조
+- **실제 저장소**: `~/Development/mac-nvim-config` (필수 위치)
+- **심볼릭 링크**: `~/mac-nvim` → `~/Development/mac-nvim-config`
 
 ## 📁 구조
 
