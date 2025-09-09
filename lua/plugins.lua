@@ -110,32 +110,17 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 		config = function()
-			-- Wrap in pcall for error handling
-			local status_ok, configs = pcall(require, "nvim-treesitter.configs")
-			if not status_ok then
-				vim.notify("Failed to load nvim-treesitter configs", vim.log.levels.ERROR)
-				return
-			end
-			
-			configs.setup({
+			require("nvim-treesitter.configs").setup({
 				ensure_installed = { 
 					"c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline",
 					"python", "javascript", "typescript", "tsx", "json", "yaml", "toml",
-					"html", "css", "bash", "rust", "go", "cpp", "java"
+					"html", "css", "bash", "rust", "go", "cpp", "java", "sql"
 				},
 				sync_install = false,
 				auto_install = true,
 				highlight = {
 					enable = true,
 					additional_vim_regex_highlighting = false,
-					-- Disable for large files
-					disable = function(lang, buf)
-						local max_filesize = 100 * 1024 -- 100 KB
-						local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-						if ok and stats and stats.size > max_filesize then
-							return true
-						end
-					end,
 				},
 				indent = {
 					enable = true,
@@ -150,12 +135,6 @@ return {
 					},
 				},
 			})
-			
-			-- Handle parser errors gracefully
-			local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-			for lang, config in pairs(parser_config) do
-				config.used_by = config.used_by or {}
-			end
 		end,
 	},
 
@@ -170,22 +149,7 @@ return {
 	{
 		"numToStr/Comment.nvim",
 		config = function()
-			require("Comment").setup({
-				-- Custom keymaps
-				toggler = {
-					line = ",cc",  -- Line-comment toggle keymap
-					block = ",bc", -- Block-comment toggle keymap
-				},
-				opleader = {
-					line = ",c",   -- Line-comment keymap
-					block = ",b",  -- Block-comment keymap
-				},
-				extra = {
-					above = ",cO", -- Add comment on the line above
-					below = ",co", -- Add comment on the line below
-					eol = ",cA",   -- Add comment at the end of line
-				},
-			})
+			require("Comment").setup()
 		end,
 	},
 
@@ -195,23 +159,6 @@ return {
 		event = "VeryLazy",
 		config = function()
 			require("nvim-surround").setup({})
-		end,
-	},
-
-	{
-		"mg979/vim-visual-multi",
-		branch = "master",
-		config = function()
-			-- Set leader key for visual-multi
-			vim.g.VM_leader = ","
-			-- Basic keymaps
-			vim.g.VM_maps = {
-				["Find Under"] = "<C-d>",
-				["Find Subword Under"] = "<C-d>",
-				["Select All"] = "<C-a>",
-				["Add Cursor Down"] = "<C-Down>",
-				["Add Cursor Up"] = "<C-Up>",
-			}
 		end,
 	},
 
@@ -487,7 +434,6 @@ return {
 					rust = { "rustfmt" },
 					go = { "gofmt", "goimports" },
 					sh = { "shfmt" },
-					sql = { "sqlfmt" },
 					["_"] = { "trim_whitespace" },
 				},
 				format_on_save = {
@@ -636,17 +582,58 @@ return {
 		"github/copilot.vim",
 	},
 
+	-- Database UI (vim-dadbod)
 	{
-		"nvim-pack/nvim-spectre",
-		dependencies = { "nvim-lua/plenary.nvim" },
-		config = function()
-			require("spectre").setup({
-				color_devicons = true,
-				open_cmd = 'vnew',
-				live_update = false,
-				line_sep_start = '┌-----------------------------------------',
-				result_padding = '¦  ',
-				line_sep       = '└-----------------------------------------',
+		"tpope/vim-dadbod",
+	},
+
+	{
+		"kristijanhusak/vim-dadbod-ui",
+		dependencies = {
+			"tpope/vim-dadbod",
+			"kristijanhusak/vim-dadbod-completion",
+		},
+		cmd = {
+			"DBUI",
+			"DBUIToggle",
+			"DBUIAddConnection",
+			"DBUIFindBuffer",
+		},
+		init = function()
+			-- DBUI 기본 설정
+			local data_path = vim.fn.stdpath("data")
+			vim.g.db_ui_save_location = data_path .. "/dadbod_ui"
+			vim.g.db_ui_tmp_query_location = data_path .. "/dadbod_ui/tmp"
+			
+			-- UI 개선
+			vim.g.db_ui_use_nerd_fonts = 1
+			vim.g.db_ui_show_database_icon = 1
+			vim.g.db_ui_use_nvim_notify = 1
+			
+			-- 안전을 위해 자동 실행 비활성화
+			vim.g.db_ui_execute_on_save = 0
+			
+			-- 테이블 헬퍼 자동 실행 활성화
+			vim.g.db_ui_auto_execute_table_helpers = 1
+		end,
+	},
+
+	{
+		"kristijanhusak/vim-dadbod-completion",
+		dependencies = "tpope/vim-dadbod",
+		ft = { "sql", "mysql", "plsql" },
+		init = function()
+			-- SQL 파일에서 dadbod 자동완성 활성화
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = { "sql", "mysql", "plsql" },
+				callback = function()
+					local cmp = require("cmp")
+					local sources = vim.tbl_map(function(source)
+						return { name = source.name }
+					end, cmp.get_config().sources)
+					table.insert(sources, { name = "vim-dadbod-completion" })
+					cmp.setup.buffer({ sources = sources })
+				end,
 			})
 		end,
 	},
