@@ -82,4 +82,11 @@ map("n", "[d", vim.diagnostic.goto_prev, lsp_opts)
 map("n", "]d", vim.diagnostic.goto_next, lsp_opts)
 map("n", "<space>q", vim.diagnostic.setloclist, lsp_opts)
 
+-- Spectre (전역 찾기&바꾸기)
+map("n", "<D-f>", "<cmd>lua require('spectre').toggle()<CR>", { desc = "Toggle Spectre" })
+map("n", "<leader>sr", "<cmd>lua require('spectre').toggle()<CR>", { desc = "Toggle Spectre" })
+map("n", "<leader>sw", "<cmd>lua require('spectre').open_visual({select_word=true})<CR>", { desc = "Search current word" })
+map("n", "<leader>sf", "<cmd>lua require('spectre').open_file_search({select_word=true})<CR>", { desc = "Search on current file" })
+map("v", "<leader>sw", "<esc><cmd>lua require('spectre').open_visual()<CR>", { desc = "Search current word" })
+
 
