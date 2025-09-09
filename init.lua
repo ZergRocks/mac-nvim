@@ -1,6 +1,12 @@
 require("settings")
 require("keymaps")
 
+-- Load Treesitter safety wrapper
+local ts_safe_ok, ts_safe = pcall(require, "treesitter-safe")
+if ts_safe_ok then
+	ts_safe.setup()
+end
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"

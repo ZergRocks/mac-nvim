@@ -74,6 +74,9 @@ BREW_PACKAGES=(
     "lsd"
     "neovim"
     "bat"
+    "stylua"
+    "shfmt"
+    "node"
 )
 
 # Cask packages
@@ -114,10 +117,23 @@ if command -v conda &>/dev/null; then
     # Install essential Python packages for development
     print_info "Installing Python development packages..."
     conda install -y -c conda-forge python numpy pandas jupyter ipython 2>/dev/null || true
-    pip install --upgrade pip neovim pynvim 2>/dev/null || true
+    pip install --upgrade pip neovim pynvim sqlfmt ruff 2>/dev/null || true
     print_status "Python packages configured"
 else
     print_warning "Conda not found. Install miniconda first for Python development"
+fi
+
+# Install Node.js formatters
+print_info "Installing Node.js formatters..."
+if command_exists npm; then
+    print_info "Installing prettier..."
+    if npm install -g prettier; then
+        print_status "Prettier installed globally"
+    else
+        print_error "Failed to install prettier"
+    fi
+else
+    print_warning "npm not available. Install Node.js first for prettier support"
 fi
 
 # 4. Install Oh My Zsh
