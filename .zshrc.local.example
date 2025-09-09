@@ -13,8 +13,13 @@ export AWS_ACCESS_KEY_ID='YOUR_ACCESS_KEY'
 export AWS_SECRET_ACCESS_KEY='YOUR_SECRET_KEY'
 export AWS_DEFAULT_REGION='us-west-2'
 
-# Database Credentials
+# Database Credentials for vim-dadbod
 export DATABASE_URL='postgresql://user:password@localhost:5432/dbname'
+export DEV_POSTGRES_URL='postgresql://postgres:password@localhost:5432/dev_db'
+export DEV_MYSQL_URL='mysql://root:password@localhost:3306/dev_db'
+export LOCAL_SQLITE_DB='sqlite:~/databases/local.db'
+export ANALYTICS_DUCKDB='duckdb:~/data/analytics.duckdb'
+export SNOWFLAKE_URL='snowflake://user:pass@account.region/db/schema?warehouse=wh'
 export REDIS_URL='redis://localhost:6379'
 
 # Application Secrets
@@ -29,6 +34,8 @@ export DEBUG='app:*'
 alias vim='nvim'
 alias vi='nvim'
 alias v='nvim'
+alias dbui='nvim -c "DBUIToggle"'
+alias sqlnvim='nvim +"setf sql"'
 
 # Custom Functions
 function gcommit() {

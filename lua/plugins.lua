@@ -114,7 +114,7 @@ return {
 				ensure_installed = { 
 					"c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline",
 					"python", "javascript", "typescript", "tsx", "json", "yaml", "toml",
-					"html", "css", "bash", "rust", "go", "cpp", "java"
+					"html", "css", "bash", "rust", "go", "cpp", "java", "sql"
 				},
 				sync_install = false,
 				auto_install = true,
@@ -580,5 +580,61 @@ return {
 
 	{
 		"github/copilot.vim",
+	},
+
+	-- Database UI (vim-dadbod)
+	{
+		"tpope/vim-dadbod",
+	},
+
+	{
+		"kristijanhusak/vim-dadbod-ui",
+		dependencies = {
+			"tpope/vim-dadbod",
+			"kristijanhusak/vim-dadbod-completion",
+		},
+		cmd = {
+			"DBUI",
+			"DBUIToggle",
+			"DBUIAddConnection",
+			"DBUIFindBuffer",
+		},
+		init = function()
+			-- DBUI 기본 설정
+			local data_path = vim.fn.stdpath("data")
+			vim.g.db_ui_save_location = data_path .. "/dadbod_ui"
+			vim.g.db_ui_tmp_query_location = data_path .. "/dadbod_ui/tmp"
+			
+			-- UI 개선
+			vim.g.db_ui_use_nerd_fonts = 1
+			vim.g.db_ui_show_database_icon = 1
+			vim.g.db_ui_use_nvim_notify = 1
+			
+			-- 안전을 위해 자동 실행 비활성화
+			vim.g.db_ui_execute_on_save = 0
+			
+			-- 테이블 헬퍼 자동 실행 활성화
+			vim.g.db_ui_auto_execute_table_helpers = 1
+		end,
+	},
+
+	{
+		"kristijanhusak/vim-dadbod-completion",
+		dependencies = "tpope/vim-dadbod",
+		ft = { "sql", "mysql", "plsql" },
+		init = function()
+			-- SQL 파일에서 dadbod 자동완성 활성화
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = { "sql", "mysql", "plsql" },
+				callback = function()
+					local cmp = require("cmp")
+					local sources = vim.tbl_map(function(source)
+						return { name = source.name }
+					end, cmp.get_config().sources)
+					table.insert(sources, { name = "vim-dadbod-completion" })
+					cmp.setup.buffer({ sources = sources })
+				end,
+			})
+		end,
 	},
 }

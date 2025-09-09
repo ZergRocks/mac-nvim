@@ -29,9 +29,9 @@ map({ "n", "x" }, ",y", '"+y')
 map("n", ",pp", '"+p')
 map("n", "<Leader>zz", ":%s/\\s\\+$//e<CR>")
 
-map("n", "<Leader>gn", ":bp<CR>", opts)
-map("n", "<Leader>gm", ":bn<CR>", opts)
-map("n", "<Leader>gd", ":bd<CR>", opts)
+map("n", "<Leader>bp", ":bp<CR>", opts)
+map("n", "<Leader>bn", ":bn<CR>", opts)
+map("n", "<Leader>bd", ":bd<CR>", opts)
 
 map("n", "<Leader>bb", ":Buffers<CR>", opts)
 
@@ -81,5 +81,11 @@ map("n", "<space>e", vim.diagnostic.open_float, lsp_opts)
 map("n", "[d", vim.diagnostic.goto_prev, lsp_opts)
 map("n", "]d", vim.diagnostic.goto_next, lsp_opts)
 map("n", "<space>q", vim.diagnostic.setloclist, lsp_opts)
+
+-- Database UI (vim-dadbod)
+map("n", "<Leader>dd", ":DBUIToggle<CR>", { desc = "Toggle Database UI" })
+map("n", "<Leader>df", ":DBUIFindBuffer<CR>", { desc = "Find DB buffer" })
+map("n", "<Leader>dr", ":DBUIRenameBuffer<CR>", { desc = "Rename DB buffer" })
+map("n", "<Leader>dl", ":DBUILastQueryInfo<CR>", { desc = "Last query info" })
 
 
