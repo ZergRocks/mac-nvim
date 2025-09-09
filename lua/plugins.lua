@@ -110,7 +110,14 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 		config = function()
-			require("nvim-treesitter.configs").setup({
+			-- Wrap in pcall for error handling
+			local status_ok, configs = pcall(require, "nvim-treesitter.configs")
+			if not status_ok then
+				vim.notify("Failed to load nvim-treesitter configs", vim.log.levels.ERROR)
+				return
+			end
+			
+			configs.setup({
 				ensure_installed = { 
 					"c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline",
 					"python", "javascript", "typescript", "tsx", "json", "yaml", "toml",
@@ -121,6 +128,14 @@ return {
 				highlight = {
 					enable = true,
 					additional_vim_regex_highlighting = false,
+					-- Disable for large files
+					disable = function(lang, buf)
+						local max_filesize = 100 * 1024 -- 100 KB
+						local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+						if ok and stats and stats.size > max_filesize then
+							return true
+						end
+					end,
 				},
 				indent = {
 					enable = true,
@@ -135,6 +150,12 @@ return {
 					},
 				},
 			})
+			
+			-- Handle parser errors gracefully
+			local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+			for lang, config in pairs(parser_config) do
+				config.used_by = config.used_by or {}
+			end
 		end,
 	},
 
@@ -149,7 +170,22 @@ return {
 	{
 		"numToStr/Comment.nvim",
 		config = function()
-			require("Comment").setup()
+			require("Comment").setup({
+				-- Custom keymaps
+				toggler = {
+					line = ",cc",  -- Line-comment toggle keymap
+					block = ",bc", -- Block-comment toggle keymap
+				},
+				opleader = {
+					line = ",c",   -- Line-comment keymap
+					block = ",b",  -- Block-comment keymap
+				},
+				extra = {
+					above = ",cO", -- Add comment on the line above
+					below = ",co", -- Add comment on the line below
+					eol = ",cA",   -- Add comment at the end of line
+				},
+			})
 		end,
 	},
 
@@ -159,6 +195,23 @@ return {
 		event = "VeryLazy",
 		config = function()
 			require("nvim-surround").setup({})
+		end,
+	},
+
+	{
+		"mg979/vim-visual-multi",
+		branch = "master",
+		config = function()
+			-- Set leader key for visual-multi
+			vim.g.VM_leader = ","
+			-- Basic keymaps
+			vim.g.VM_maps = {
+				["Find Under"] = "<C-d>",
+				["Find Subword Under"] = "<C-d>",
+				["Select All"] = "<C-a>",
+				["Add Cursor Down"] = "<C-Down>",
+				["Add Cursor Up"] = "<C-Up>",
+			}
 		end,
 	},
 
@@ -434,6 +487,7 @@ return {
 					rust = { "rustfmt" },
 					go = { "gofmt", "goimports" },
 					sh = { "shfmt" },
+					sql = { "sqlfmt" },
 					["_"] = { "trim_whitespace" },
 				},
 				format_on_save = {
@@ -580,5 +634,20 @@ return {
 
 	{
 		"github/copilot.vim",
+	},
+
+	{
+		"nvim-pack/nvim-spectre",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		config = function()
+			require("spectre").setup({
+				color_devicons = true,
+				open_cmd = 'vnew',
+				live_update = false,
+				line_sep_start = '┌-----------------------------------------',
+				result_padding = '¦  ',
+				line_sep       = '└-----------------------------------------',
+			})
+		end,
 	},
 }
